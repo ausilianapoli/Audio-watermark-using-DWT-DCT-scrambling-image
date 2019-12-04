@@ -38,36 +38,44 @@ def getImageShape(img):
     return img.shape[1], img.shape[0]
 
 #Arnold transform
-def arnoldTransform(img):
+def arnoldTransform(img, iteration):
     width, heigth = getImageShape(img)
+    toTransform = img.copy()
     transformed = img.copy()
-
-    for i in range(width):
-        for j in range(heigth):
-            newX = (i + j) % width
-            newY = (i + 2*j) % heigth
-            transformed[(newX,newY)] = img[(i,j)]
+    
+    for iter in range(iteration):
+        
+        for i in range(width):
+            for j in range(heigth):
+                newX = (i + j) % width
+                newY = (i + 2*j) % heigth
+                transformed[(newX,newY)] = toTransform[(i,j)]
+        toTransform = transformed.copy()
 
     return transformed
 
+
 #Inverse Arnold transform
-def iarnoldTransform(img):
+def iarnoldTransform(img, iteration):
     width, heigth = getImageShape(img)
     itransformed = img.copy()
-
-    for i in range(width):
-        for j in range(heigth):
-            newX = (2*i - j) % width
-            newY = (-i + j) % heigth
-            itransformed[(newX,newY)] = img[(i,j)]
-
+    itoTransform = img.copy()
+    
+    for iter in range(iteration):
+        
+        for i in range(width):
+            for j in range(heigth):
+                newX = (2*i - j) % width
+                newY = (-i + j) % heigth
+                itransformed[(newX,newY)] = itoTransform[(i,j)]
+        itoTransform = itransformed.copy()
     return itransformed
 
 #Esempio
 
 img = loadImage("right.png")
-t = arnoldTransform(img)
+t = arnoldTransform(img,1)
 showImage(t)
 
-it = iarnoldTransform(t)
+it = iarnoldTransform(t,1)
 showImage(it)
