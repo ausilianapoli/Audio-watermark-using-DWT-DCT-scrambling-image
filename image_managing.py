@@ -4,9 +4,9 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 #Return numpy array from a Image file
-def loadImage(path):
+def loadImage(path=""):
     if path is "":
-        print("Path must not be None!")
+        print("LOAD IMAGE: Path must not be None!")
         return 
 
     img = Image.open(path)
@@ -20,12 +20,12 @@ def showImage(img=None, path=None):
     elif img is not None:
         Image.fromarray(img).show()
     else:
-        print("showImage needs an array or a path!")
+        print("SHOW IMAGE: showImage needs an array or a path!")
 
 #Save image from array or Image file
 def saveImage(img, path):
     if path is "":
-        print("Path must not be None!")
+        print("SAVE IMAGE: Path must not be None!")
         return 
     
     if type(img) is np.ndarray:
@@ -71,11 +71,15 @@ def iarnoldTransform(img, iteration):
         itoTransform = itransformed.copy()
     return itransformed
 
-#Esempio
 
+'''
+TESTING
+'''
+
+img = loadImage()
 img = loadImage("right.png")
-t = arnoldTransform(img,1)
+t = arnoldTransform(img,5)
+saveImage(t, "here.png")
 showImage(t)
-
-it = iarnoldTransform(t,1)
+it = iarnoldTransform(t,5)
 showImage(it)
