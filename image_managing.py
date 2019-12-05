@@ -118,7 +118,7 @@ def itriangularMappingTransform(img, iteration, a, c, d):
 
 #to write find numeri primi fra loro
 
-#Esempio
+
 '''
 TESTING
 '''
@@ -132,9 +132,9 @@ showImage(t)
 it = iarnoldTransform(t,1)
 showImage(it)
 
-m = triangularMappingTransform(imgr,2,5,10,7)
+m = triangularMappingTransform(imgr,2,1,10,1)
 showImage(m)
 saveImage(m, "triangular_2_iterations.png")
 
-im = itriangularMappingTransform(m,2,5,10,7)
+im = itriangularMappingTransform(m,2,1,10,1)
 showImage(im)
