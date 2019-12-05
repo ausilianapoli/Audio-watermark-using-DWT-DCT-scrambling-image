@@ -134,6 +134,7 @@ showImage(it)
 
 m = triangularMappingTransform(imgr,1,5,1,7)
 showImage(m)
+saveImage(m, "triangular_1_iterations.png")
 
 im = itriangularMappingTransform(m,1,5,1,7)
 showImage(im)
