@@ -5,7 +5,7 @@ import numpy as np
 import math
 
 #Return numpy array from a Image file
-def loadImage(path):
+def loadImage(path=""):
     if path is "":
         print("LOAD IMAGE: Path must not be None!")
         return 
@@ -122,6 +122,7 @@ def itriangularMappingTransform(img, iteration, a, c, d):
 '''
 TESTING
 '''
+img = loadImage()
 img = loadImage("right.png")
 imgr = loadImage("07.jpg")
 
