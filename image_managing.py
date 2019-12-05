@@ -132,9 +132,9 @@ showImage(t)
 it = iarnoldTransform(t,1)
 showImage(it)
 
-m = triangularMappingTransform(imgr,1,5,1,7)
+m = triangularMappingTransform(imgr,2,5,1,7)
 showImage(m)
-saveImage(m, "triangular_1_iterations.png")
+saveImage(m, "triangular_2_iterations.png")
 
-im = itriangularMappingTransform(m,1,5,1,7)
+im = itriangularMappingTransform(m,2,5,1,7)
 showImage(im)
