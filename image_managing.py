@@ -39,11 +39,31 @@ def saveImage(img, path):
 def getImageShape(img):
     return img.shape[1], img.shape[0]
 
+#Return inverse module m of a
 def imodule(a, m):
     a = a % m
     for x in range(m):
         if (a * x) % m == 1:
             return x   
+    return 1
+
+#Return first or second number coprime with m
+def coprime(m, mode="first"):
+    if mode is not "first" and mode is not "second":
+        print("COPRIME: Mode must be first or second!")
+        return
+
+    found = 0
+    for x in range(2,m):
+        if math.gcd(x,m) == 1:
+            if mode is "first":
+                return x
+            elif mode is "second":
+                if found < 1:
+                    found += 1
+                else:
+                    return x
+
     return 1
 
 #Arnold transform
@@ -81,8 +101,12 @@ def iarnoldTransform(img, iteration):
     return transformed
 
 #2D lower triangular mapping
-def triangularMappingTransform(img, iteration, a, c, d):
+def triangularMappingTransform(img, iteration, c):
     width, heigth = getImageShape(img)
+    coprime_mode = "first"
+    a = coprime(width, coprime_mode)
+    d = coprime(heigth, coprime_mode)
+    
     transformed = img.copy()
     toTransform = img.copy()
     
@@ -99,8 +123,12 @@ def triangularMappingTransform(img, iteration, a, c, d):
     return transformed
     
 #2D inverse lower triangular mapping
-def itriangularMappingTransform(img, iteration, a, c, d):
+def itriangularMappingTransform(img, iteration, c):
     width, heigth = getImageShape(img)
+    coprime_mode = "first"
+    a = coprime(width, coprime_mode)
+    d = coprime(heigth, coprime_mode)
+    
     transformed = img.copy()
     toTransform = img.copy()
     ia = imodule(a, width)
@@ -116,13 +144,12 @@ def itriangularMappingTransform(img, iteration, a, c, d):
         toTransform = transformed.copy()
     return transformed
 
-#to write find numeri primi fra loro
-
 
 '''
 TESTING
 '''
-img = loadImage()
+
+
 img = loadImage("right.png")
 imgr = loadImage("07.jpg")
 
@@ -132,9 +159,9 @@ showImage(t)
 it = iarnoldTransform(t,1)
 showImage(it)
 
-m = triangularMappingTransform(imgr,2,1,10,1)
+m = triangularMappingTransform(img,iteration=1,c=3)
 showImage(m)
-saveImage(m, "triangular_2_iterations.png")
+#saveImage(m, "triangular_2_iterations.png")
 
-im = itriangularMappingTransform(m,2,1,10,1)
+im = itriangularMappingTransform(m,iteration=1,c=3)
 showImage(im)
