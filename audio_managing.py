@@ -1,8 +1,8 @@
 from scipy.io import wavfile
-import numpy as np
 import subprocess as sp
-import os
 import platform
+from utils import makeFileName
+import os
 
 AUDIO_PATH = 0
 SAMPLERATE = 1
@@ -24,12 +24,22 @@ def printMetadata(entry):
           .format(entry[AUDIO_DATA].shape))
 
 #Save processed file audio with wav format
-def saveFile(path, samplerate, signal):
-    fileName = os.path.basename(path)
-    dirName = os.path.dirname(path)
-    fileName = "watermarked_" + fileName
-    path = os.path.join(dirName, fileName)
+def saveWavFile(path, samplerate, signal):
+    path = makeFileName("watermarked", path)
     wavfile.write(path, samplerate, signal)
+    
+#Join audio channels to only one
+def joinAudioChannels(path):
+    outPath = makeFileName("mono", path)
+    if platform.system() == "Linux":
+        cmdffmpeg_L = "ffmpeg -y -i {} -ac 1 -f wav {}"\
+                    .format(path, outPath)
+        os.system(cmdffmpeg_L)
+    elif platform.system() == "Windows":
+        cmdffmpeg_W = "./ffmpeg/bin/ffmpeg.exe -y -i {} -ac 1 -f wav {}"\
+                    .format(path, outPath)
+        sp.call(cmdffmpeg_W)
+    return outPath
 
 '''
 TESTING
@@ -37,6 +47,6 @@ TESTING
 
 tupleAudio = readWavFile("piano.wav")
 printMetadata(tupleAudio)
-saveFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DATA])
-
+saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DATA])
+monoAudio = joinAudioChannels(tupleAudio[AUDIO_PATH])
 
