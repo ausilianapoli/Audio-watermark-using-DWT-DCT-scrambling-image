@@ -11,7 +11,10 @@ SAMPLERATE = 1
 AUDIO_DATA = 2
 
 #Read the file audio.wav from path
-def readWavFile(path):
+def readWavFile(path = ""):
+    if path == "":
+        print("READ WAV FILE must have valid path!")
+        return 1
     samplerate, data = wavfile.read(path)
     tupleWav = (path, samplerate, data)
     return tupleWav
@@ -61,6 +64,7 @@ def toFrame(audio, len):
 TESTING
 '''
 
+readWavFile()
 tupleAudio = readWavFile("piano.wav")
 printMetadata(tupleAudio)
 print("Is the audio mono? ", isMono(tupleAudio[AUDIO_DATA])) #false
