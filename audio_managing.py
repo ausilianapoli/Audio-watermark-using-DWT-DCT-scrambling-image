@@ -41,7 +41,8 @@ def joinAudioChannels(path):
         cmdffmpeg_W = "./ffmpeg/bin/ffmpeg.exe -y -i {} -ac 1 -f wav {}"\
                     .format(path, outPath)
         sp.call(cmdffmpeg_W)
-    return outPath
+    tupleMono = readWavFile(outPath)
+    return tupleMono
 
 #Divide audio in frames
 def toFrame(audio, len):
@@ -58,8 +59,9 @@ TESTING
 
 tupleAudio = readWavFile("piano.wav")
 printMetadata(tupleAudio)
-ssaveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DATA])
-monoAudio = joinAudioChannels(tupleAudio[AUDIO_PATH])
+saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DATA])
+tupleAudio = joinAudioChannels(tupleAudio[AUDIO_PATH])
 frames = toFrame(tupleAudio[AUDIO_DATA],len=1000)
+print(frames.shape)
 
 
