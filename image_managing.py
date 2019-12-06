@@ -3,6 +3,7 @@ import cv2
 from matplotlib import pyplot as plt
 import numpy as np
 import math
+from utils import imodule, coprime
 
 #Return numpy array from a Image file
 def loadImage(path=""):
@@ -39,36 +40,13 @@ def saveImage(img, path):
 def getImageShape(img):
     return img.shape[1], img.shape[0]
 
-#Return inverse module m of a
-def imodule(a, m):
-    a = a % m
-    for x in range(m):
-        if (a * x) % m == 1:
-            return x   
-    return 1
-
-#Return first or second number coprime with m
-def coprime(m, mode="first"):
-    if mode is not "first" and mode is not "second":
-        print("COPRIME: Mode must be first or second!")
-        return
-
-    found = 0
-    for x in range(2,m):
-        if math.gcd(x,m) == 1:
-            if mode is "first":
-                return x
-            elif mode is "second":
-                if found < 1:
-                    found += 1
-                else:
-                    return x
-
-    return 1
-
 #Arnold transform
 def arnoldTransform(img, iteration):
-    side, _ = getImageShape(img)
+    width, heigth = getImageShape(img)
+    if width != heigth:
+        print("ARNOLD TRANSFORM: Image must be square!")
+        return
+    side = width
     toTransform = img.copy()
     transformed = img.copy()
     
@@ -86,7 +64,11 @@ def arnoldTransform(img, iteration):
 
 #Inverse Arnold transform
 def iarnoldTransform(img, iteration):
-    side, _ = getImageShape(img)
+    width, heigth = getImageShape(img)
+    if width != heigth:
+        print("IARNOLD TRANSFORM: Image must be square!")
+        return
+    side = width
     transformed = img.copy()
     toTransform = img.copy()
     
@@ -101,11 +83,12 @@ def iarnoldTransform(img, iteration):
     return transformed
 
 #2D lower triangular mapping
-def triangularMappingTransform(img, iteration, c):
+def lowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
     width, heigth = getImageShape(img)
     coprime_mode = "first"
-    a = coprime(width, coprime_mode)
-    d = coprime(heigth, coprime_mode)
+    if a == -1 and d == -1:
+        a = coprime(width, coprime_mode)
+        d = coprime(heigth, coprime_mode)
     
     transformed = img.copy()
     toTransform = img.copy()
@@ -123,11 +106,12 @@ def triangularMappingTransform(img, iteration, c):
     return transformed
     
 #2D inverse lower triangular mapping
-def itriangularMappingTransform(img, iteration, c):
+def ilowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
     width, heigth = getImageShape(img)
     coprime_mode = "first"
-    a = coprime(width, coprime_mode)
-    d = coprime(heigth, coprime_mode)
+    if a == -1 and d == -1:
+        a = coprime(width, coprime_mode)
+        d = coprime(heigth, coprime_mode)
     
     transformed = img.copy()
     toTransform = img.copy()
@@ -144,11 +128,77 @@ def itriangularMappingTransform(img, iteration, c):
         toTransform = transformed.copy()
     return transformed
 
+#2D upper triangular mapping
+def upperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
+    width, heigth = getImageShape(img)
+    coprime_mode = "first"
+    if a == -1 and d == -1:
+        a = coprime(width, coprime_mode)
+        d = coprime(heigth, coprime_mode)
+    
+    transformed = img.copy()
+    toTransform = img.copy()
+    
+    for iter in range(iteration):
+        
+        for i in range(width):
+            for j in range(heigth):
+                newX = (a*i + c*j) % width
+                newY = (d*j) % heigth
+                transformed[(newY,newX)] = toTransform[(j,i)]
+
+        toTransform = transformed.copy()
+    
+    return transformed
+    
+#2D inverse upper triangular mapping
+def iupperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
+    width, heigth = getImageShape(img)
+    coprime_mode = "first"
+    if a == -1 and d == -1:
+        a = coprime(width, coprime_mode)
+        d = coprime(heigth, coprime_mode)
+    
+    transformed = img.copy()
+    toTransform = img.copy()
+    ia = imodule(a, width)
+    id = imodule(d, heigth)
+    for iter in range(iteration):
+        
+        for i in range(width):
+            for j in range(heigth):
+                newY = (id*j) % heigth
+                newX = (ia*(i + (math.ceil(c*heigth/width)*width) - (c*newY))) % width
+                transformed[(newY,newX)] = toTransform[(j,i)]
+
+        toTransform = transformed.copy()
+    return transformed
+
+def mappingTransform(mode, img, iteration, c, a=-1, d=-1):
+    if mode is "lower":
+        m = lowerTriangularMappingTransform(img,iteration,c,a,d)
+        return m
+    if mode is "upper":
+        m = upperTriangularMappingTransform(img,iteration,c,a,d)
+        return m
+    else:
+        print("MAPPING TRANSFORM: Mode must be lower or upper!")
+        return
+
+def imappingTransform(mode, img, iteration, c, a=-1, d=-1):
+    if mode is "lower":
+        m = ilowerTriangularMappingTransform(img,iteration,c,a,d)
+        return m
+    if mode is "upper":
+        m = iupperTriangularMappingTransform(img,iteration,c,a,d)
+        return m
+    else:
+        print("MAPPING TRANSFORM: Mode must be lower or upper!")
+        return
 
 '''
 TESTING
 '''
-
 
 img = loadImage("right.png")
 imgr = loadImage("07.jpg")
@@ -159,9 +209,16 @@ showImage(t)
 it = iarnoldTransform(t,1)
 showImage(it)
 
-m = triangularMappingTransform(img,iteration=1,c=3)
+m = mappingTransform(mode="lower",img=imgr,iteration=1,c=3,a=5)
 showImage(m)
 #saveImage(m, "triangular_2_iterations.png")
 
-im = itriangularMappingTransform(m,iteration=1,c=3)
+im = imappingTransform(mode="lower",img=m,iteration=1,c=3,a=5)
 showImage(im)
+
+m1 = mappingTransform(mode="upper",img=imgr,iteration=1,c=3)
+showImage(m1)
+#saveImage(m, "triangular_2_iterations.png")
+
+im1 = imappingTransform(mode="upper",img=m1,iteration=1,c=3)
+showImage(im1)

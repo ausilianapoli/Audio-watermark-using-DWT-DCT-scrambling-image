@@ -3,6 +3,8 @@ import subprocess as sp
 import platform
 from utils import makeFileName
 import os
+import numpy as np
+import math
 
 AUDIO_PATH = 0
 SAMPLERATE = 1
@@ -41,12 +43,23 @@ def joinAudioChannels(path):
         sp.call(cmdffmpeg_W)
     return outPath
 
+#Divide audio in frames
+def toFrame(audio, len):
+    numFrames = math.ceil(audio.shape[0]/len)
+    frames = list()
+    for i in range(numFrames):
+        frames.append(audio[i*len : (i*len)+len])
+    
+    return np.asarray(frames)
+
 '''
 TESTING
 '''
 
 tupleAudio = readWavFile("piano.wav")
 printMetadata(tupleAudio)
-saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DATA])
+ssaveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DATA])
 monoAudio = joinAudioChannels(tupleAudio[AUDIO_PATH])
+frames = toFrame(tupleAudio[AUDIO_DATA],len=1000)
+
 
