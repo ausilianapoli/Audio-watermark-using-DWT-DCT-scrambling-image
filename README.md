@@ -14,6 +14,7 @@ Structure of the project:
 - `audio_managing.py` containing  
 	- `readWavFile` to read file audio.wav from path;
 	- `printMetadata` to print some information about audio (e.g. path, samplerate, #samples);
+	- `isMono` to check the number of channels of input audio file;
 	- `saveWavFile` to save processed file with audio wav format;
 	- `joinAudioChannels` to join audio channels to only one.
 - `image_managing.py` containing  

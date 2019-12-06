@@ -5,6 +5,7 @@ from utils import makeFileName
 import os
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 AUDIO_PATH = 0
 SAMPLERATE = 1
@@ -60,6 +61,14 @@ def toFrame(audio, len):
     
     return np.asarray(frames)
 
+#Plot the waveform of input audio file
+def waveform(entry):
+    plt.figure()
+    plt.plot(entry[AUDIO_DATA])
+    plt.title("Waveform: {}"\
+              .format(entry[AUDIO_PATH]))
+    plt.show()
+
 '''
 TESTING
 '''
@@ -74,6 +83,7 @@ printMetadata(tupleAudio)
 print("Is the audio mono? ", isMono(tupleAudio[AUDIO_DATA])) #true
 frames = toFrame(tupleAudio[AUDIO_DATA],len=1000)
 print("Number of frames:", frames.shape) #303 ca
+waveform(tupleAudio)
 
 
 
