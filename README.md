@@ -17,6 +17,7 @@ Structure of the project:
 	- `isMono` to check the number of channels of input audio file;
 	- `saveWavFile` to save processed file with audio wav format;
 	- `joinAudioChannels` to join audio channels to only one.
+	- `waveform` to plot the waveform of input audio file
 - `image_managing.py` containing  
 - `watermark_embedding_extraction.py` containing
 - `metrics.py` containing
