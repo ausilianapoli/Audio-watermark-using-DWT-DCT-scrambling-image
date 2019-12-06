@@ -25,6 +25,10 @@ def printMetadata(entry):
     print("\t#samples: {}"\
           .format(entry[AUDIO_DATA].shape))
 
+#Check the number of channels of audio file
+def isMono(dataAudio):
+    return (True if len(dataAudio.shape) == 1 else False)
+
 #Save processed file audio with wav format
 def saveWavFile(path, samplerate, signal):
     path = makeFileName("watermarked", path)
@@ -59,9 +63,13 @@ TESTING
 
 tupleAudio = readWavFile("piano.wav")
 printMetadata(tupleAudio)
+print("Is the audio mono? ", isMono(tupleAudio[AUDIO_DATA])) #false
 saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DATA])
 tupleAudio = joinAudioChannels(tupleAudio[AUDIO_PATH])
+printMetadata(tupleAudio)
+print("Is the audio mono? ", isMono(tupleAudio[AUDIO_DATA])) #true
 frames = toFrame(tupleAudio[AUDIO_DATA],len=1000)
-print(frames.shape)
+print("Number of frames:", frames.shape) #303 ca
+
 
 
