@@ -6,10 +6,12 @@ import os
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+import pywt
 
 AUDIO_PATH = 0
 SAMPLERATE = 1
 AUDIO_DATA = 2
+WAVELETS_LEVEL = 2
 
 #Read the file audio.wav from path
 def readWavFile(path = ""):
@@ -34,8 +36,8 @@ def isMono(dataAudio):
     return (True if len(dataAudio.shape) == 1 else False)
 
 #Save processed file audio with wav format
-def saveWavFile(path, samplerate, signal):
-    path = makeFileName("watermarked", path)
+def saveWavFile(path, samplerate, signal, prefix):
+    path = makeFileName(prefix, path)
     wavfile.write(path, samplerate, signal)
     
 #Join audio channels to only one
@@ -68,6 +70,24 @@ def waveform(entry):
     plt.title("Waveform: {}"\
               .format(entry[AUDIO_PATH]))
     plt.show()
+    
+#Get the list of all wavelets
+def getWaveletsFamilies():
+    return pywt.families(short = True)
+
+#Get the list of all signal extension modes
+def getWaveletsModes():
+    return pywt.Modes.modes
+
+#Multilevel DWT
+def DWT(data, wavelet, mode, level):
+    coeffs = pywt.wavedec(data, wavelet, mode, level)
+    #cA2, cD2, cD1 = coeffs
+    return coeffs
+
+def iDWT(coeffs, wavelet, mode):
+    data = pywt.waverec(coeffs, wavelet, mode)
+    return data
 
 '''
 TESTING
@@ -77,13 +97,28 @@ readWavFile()
 tupleAudio = readWavFile("piano.wav")
 printMetadata(tupleAudio)
 print("Is the audio mono? ", isMono(tupleAudio[AUDIO_DATA])) #false
-saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DATA])
+saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DATA], "watermarked")
 tupleAudio = joinAudioChannels(tupleAudio[AUDIO_PATH])
 printMetadata(tupleAudio)
 print("Is the audio mono? ", isMono(tupleAudio[AUDIO_DATA])) #true
 frames = toFrame(tupleAudio[AUDIO_DATA],len=1000)
 print("Number of frames:", frames.shape) #303 ca
 waveform(tupleAudio)
+waveletsFamilies = getWaveletsFamilies()
+waveletsModes = getWaveletsModes()
+coeffs = DWT(tupleAudio[AUDIO_DATA], waveletsFamilies[0], waveletsModes[0], WAVELETS_LEVEL)
+print("wavelets coeffs: ", coeffs)
+cA2, cD2, cD1 = coeffs
+print("cA2: ", cA2, "\ncD2: ", cD2, "\ncD1: ", cD1)
+#cA2 = abs(cA2)
+#cD2 = abs(cD2)
+#scD1 = abs(cD1)
+coeffs = cA2, cD2, cD1
+data = iDWT(coeffs, waveletsFamilies[0], waveletsModes[0])
+print("iDWT data: ", data)
+data = np.int16(data)
+print("iDWT == data audio? ", data == tupleAudio[AUDIO_DATA])
+saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], data, "dwt")
 
 
 
