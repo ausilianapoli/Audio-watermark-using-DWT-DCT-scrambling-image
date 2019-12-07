@@ -34,3 +34,6 @@ def makeFileName(prefix, path):
     fileName = prefix + "-" + fileName
     nPath = os.path.join(dirName, fileName)
     return nPath
+
+def setLastBit(number, bit):
+    return ((number >> 1) << 1) | bit
