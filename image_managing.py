@@ -12,13 +12,12 @@ def loadImage(path=""):
         return 
 
     img = Image.open(path)
-    imgToArray = np.array(img)
-    return imgToArray
+    return img
 
 #Show image from array or path
 def showImage(img):
-    if type(img) is np.ndarray:
-        Image.fromarray(img).show()
+    if type(img) is not str:
+        img.show()
     else:
         if img is "":
             print("SHOW IMAGE: Path must not be None!")
@@ -31,18 +30,18 @@ def saveImage(img, path):
         print("SHOW IMAGE: Path must not be None!")
         return 
     
-    if type(img) is np.ndarray:
-        Image.fromarray(img).save(path)
-    else:
-        img.save(path)
+    img.save(path)
 
-#Return image shape (width,heigth)
-def getImageShape(img):
-    return img.shape[1], img.shape[0]
+def grayscale(img):
+    return img.convert(mode="L")
+
+#Return binarized image
+def binarization(img):
+    return img.convert(mode="1",dither=0)
 
 #Arnold transform
 def arnoldTransform(img, iteration):
-    width, heigth = getImageShape(img)
+    width, heigth = img.size
     if width != heigth:
         print("ARNOLD TRANSFORM: Image must be square!")
         return
@@ -56,7 +55,8 @@ def arnoldTransform(img, iteration):
             for j in range(side):
                 newX = (i + j) % side
                 newY = (i + 2*j) % side
-                transformed[(newY,newX)] = toTransform[(j,i)]
+                value = toTransform.getpixel(xy=(i,j))
+                transformed.putpixel(xy=(newX,newY),value=value)  
         toTransform = transformed.copy()
 
     return transformed
@@ -64,7 +64,7 @@ def arnoldTransform(img, iteration):
 
 #Inverse Arnold transform
 def iarnoldTransform(img, iteration):
-    width, heigth = getImageShape(img)
+    width, heigth = img.size
     if width != heigth:
         print("IARNOLD TRANSFORM: Image must be square!")
         return
@@ -78,13 +78,14 @@ def iarnoldTransform(img, iteration):
             for j in range(side):
                 newX = (2*i - j) % side
                 newY = (-i + j) % side
-                transformed[(newY,newX)] = toTransform[(j,i)]
+                value = toTransform.getpixel(xy=(i,j))
+                transformed.putpixel(xy=(newX,newY),value=value)  
         toTransform = transformed.copy()
     return transformed
 
 #2D lower triangular mapping
 def lowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
-    width, heigth = getImageShape(img)
+    width, heigth = img.size
     coprime_mode = "first"
     if a == -1 and d == -1:
         a = coprime(width, coprime_mode)
@@ -99,7 +100,8 @@ def lowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
             for j in range(heigth):
                 newX = (a*i) % width
                 newY = (c*i + d*j) % heigth
-                transformed[(newY,newX)] = toTransform[(j,i)]
+                value = toTransform.getpixel(xy=(i,j))
+                transformed.putpixel(xy=(newX,newY),value=value)  
 
         toTransform = transformed.copy()
     
@@ -107,7 +109,7 @@ def lowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
     
 #2D inverse lower triangular mapping
 def ilowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
-    width, heigth = getImageShape(img)
+    width, heigth = img.size
     coprime_mode = "first"
     if a == -1 and d == -1:
         a = coprime(width, coprime_mode)
@@ -123,14 +125,15 @@ def ilowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
             for j in range(heigth):
                 newX = (ia*i) % width
                 newY = (id*(j + (math.ceil(c*width/heigth)*heigth) - (c*newX))) % heigth
-                transformed[(newY,newX)] = toTransform[(j,i)]
+                value = toTransform.getpixel(xy=(i,j))
+                transformed.putpixel(xy=(newX,newY),value=value)  
 
         toTransform = transformed.copy()
     return transformed
 
 #2D upper triangular mapping
 def upperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
-    width, heigth = getImageShape(img)
+    width, heigth = img.size
     coprime_mode = "first"
     if a == -1 and d == -1:
         a = coprime(width, coprime_mode)
@@ -145,7 +148,8 @@ def upperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
             for j in range(heigth):
                 newX = (a*i + c*j) % width
                 newY = (d*j) % heigth
-                transformed[(newY,newX)] = toTransform[(j,i)]
+                value = toTransform.getpixel(xy=(i,j))
+                transformed.putpixel(xy=(newX,newY),value=value)  
 
         toTransform = transformed.copy()
     
@@ -153,7 +157,7 @@ def upperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
     
 #2D inverse upper triangular mapping
 def iupperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
-    width, heigth = getImageShape(img)
+    width, heigth = img.size
     coprime_mode = "first"
     if a == -1 and d == -1:
         a = coprime(width, coprime_mode)
@@ -169,7 +173,8 @@ def iupperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
             for j in range(heigth):
                 newY = (id*j) % heigth
                 newX = (ia*(i + (math.ceil(c*heigth/width)*width) - (c*newY))) % width
-                transformed[(newY,newX)] = toTransform[(j,i)]
+                value = toTransform.getpixel(xy=(i,j))
+                transformed.putpixel(xy=(newX,newY),value=value)  
 
         toTransform = transformed.copy()
     return transformed
@@ -203,10 +208,10 @@ TESTING
 img = loadImage("right.png")
 imgr = loadImage("07.jpg")
 
-t = arnoldTransform(img,1)
+t = arnoldTransform(img,iteration=1)
 showImage(t)
 
-it = iarnoldTransform(t,1)
+it = iarnoldTransform(t,iteration=1)
 showImage(it)
 
 m = mappingTransform(mode="lower",img=imgr,iteration=1,c=3,a=5)
