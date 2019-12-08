@@ -26,5 +26,5 @@ Structure of the project:
 - `utils.py` containing
 
 ## Wavelets
-DWT are: DWT: haar, db, bior, coif, rbio, sym, dmey
-CWT are: cgau, gaus, mexh, morl, shan, cmor, fbsp
+DWT are: haar, db, bior, coif, rbio, sym, dmey.  
+CWT are: cgau, gaus, mexh, morl, shan, cmor, fbsp.  
