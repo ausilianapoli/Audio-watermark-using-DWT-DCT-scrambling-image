@@ -53,6 +53,9 @@ def printMetadata(entry):
 def isMono(dataAudio):
     return (True if len(dataAudio.shape) == 1 else False)
 
+def normalizeForWav(data):
+    return np.int16(data)
+
 #Save processed file audio with wav format
 def saveWavFile(path, samplerate, signal, prefix):
     path = makeFileName(prefix, path)
@@ -141,7 +144,7 @@ print("cA2: ", cA2, "\ncD2: ", cD2, "\ncD1: ", cD1)
 coeffs = cA2, cD2, cD1
 data = iDWT(coeffs, waveletsFamilies[0], waveletsModes[0])
 print("iDWT data: ", data)
-data = np.int16(data)
+data = normalizeForWav(data)
 print("iDWT == data audio? ", data == tupleAudio[AUDIO_DATA])
 saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], data, "dwt")
 
