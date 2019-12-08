@@ -37,3 +37,21 @@ def makeFileName(prefix, path):
 
 def setLastBit(number, bit):
     return ((number >> 1) << 1) | bit
+
+#Return a string containing the number written in binary notation with bits bit
+def numberToBinary(number, bits):
+    if number >= 2**bits:
+        print("NUMBER TO BINARY: Insufficient number of bit!")
+        return
+
+    binary = ""
+    for i in range(bits):
+        if number != 0:
+            bit = number % 2
+            number = number >> 1
+            binary += str(bit)
+        else:
+            binary += str(0)
+    
+    return binary[::-1]
+

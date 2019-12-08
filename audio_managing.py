@@ -77,13 +77,21 @@ def joinAudioChannels(path):
     return tupleMono
 
 #Divide audio in frames
-def toFrame(audio, len):
+def audioToFrame(audio, len):
     numFrames = math.ceil(audio.shape[0]/len)
     frames = list()
     for i in range(numFrames):
         frames.append(audio[i*len : (i*len)+len])
     
     return np.asarray(frames)
+
+#Join frames to single array
+def frameToAudio(frames):
+    audio = []
+    for i in range(len(frames)):
+        audio = np.concatenate((audio,frames[i]))
+    
+    return audio
 
 #Plot the waveform of input audio file
 def waveform(entry):
@@ -135,8 +143,9 @@ saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], tupleAudio[AUDIO_DAT
 tupleAudio = joinAudioChannels(tupleAudio[AUDIO_PATH])
 printMetadata(tupleAudio)
 print("Is the audio mono? ", isMono(tupleAudio[AUDIO_DATA])) #true
-frames = toFrame(tupleAudio[AUDIO_DATA],len=1000)
+frames = audioToFrame(tupleAudio[AUDIO_DATA],len=1000)
 print("Number of frames:", frames.shape) #303 ca
+
 waveform(tupleAudio)
 waveletsFamilies = getWaveletsFamilies()
 DWTFamilies = filterWaveletsFamilies(waveletsFamilies)
@@ -166,7 +175,5 @@ data = iDWT(coeffs, waveletsFamilies[0], waveletsModes[0])
 data = normalizeForWav(data)
 print("iDWT + iDCT == data audio? ", data == tupleAudio[AUDIO_DATA])
 saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], data, "dwt-dct")
-
-
 
 

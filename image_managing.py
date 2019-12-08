@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import math
 from utils import imodule, coprime
+from watermark_embedding_extraction import leastSignificantBit
 
 #Return numpy array from a Image file
 def loadImage(path=""):
@@ -207,7 +208,10 @@ TESTING
 
 img = loadImage("right.png")
 imgr = loadImage("07.jpg")
+imgr = binarization(imgr)
+#leastSignificantBit(img,imgr)
 
+"""
 t = arnoldTransform(img,iteration=1)
 showImage(t)
 
@@ -227,3 +231,4 @@ showImage(m1)
 
 im1 = imappingTransform(mode="upper",img=m1,iteration=1,c=3)
 showImage(im1)
+"""
