@@ -1,4 +1,5 @@
 from scipy.io import wavfile
+from scipy.fftpack import dct, idct
 import subprocess as sp
 import platform
 from utils import makeFileName
@@ -114,6 +115,14 @@ def iDWT(coeffs, wavelet, mode):
     data = pywt.waverec(coeffs, wavelet, mode)
     return data
 
+def DCT(data):
+    dctData = dct(data, type = 1, norm = "ortho")
+    return dctData
+
+def iDCT(data):
+    idctData = idct(data, type = 1, norm = "ortho")
+    return idctData
+
 '''
 TESTING
 '''
@@ -147,6 +156,16 @@ print("iDWT data: ", data)
 data = normalizeForWav(data)
 print("iDWT == data audio? ", data == tupleAudio[AUDIO_DATA])
 saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], data, "dwt")
+dctCoeff = DCT(cA2)
+print("DCT Coeff: ", dctCoeff)
+idctCoeff = iDCT(dctCoeff)
+print("iDCT Coeff: ", idctCoeff)
+print("cA2 == idctCoeff? ", cA2 == idctCoeff)
+coeffs = idctCoeff, cD2, cD1
+data = iDWT(coeffs, waveletsFamilies[0], waveletsModes[0])
+data = normalizeForWav(data)
+print("iDWT + iDCT == data audio? ", data == tupleAudio[AUDIO_DATA])
+saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], data, "dwt-dct")
 
 
 
