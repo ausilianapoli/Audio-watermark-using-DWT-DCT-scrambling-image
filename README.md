@@ -6,10 +6,11 @@ Audio watermark using DWT, DCT and Arnold Transformation for embedding of binary
 The follow tools are required:  
 - scipy.io.wavfile;  
 - subprocess;
-- platform;
+- pywt;
 - os;
 - [ffmpeg-20191204](https://ffmpeg.zeranoe.com/builds/)
 
+## Modules
 Structure of the project:  
 - `audio_managing.py` containing  
 	- `readWavFile` to read file audio.wav from path;
@@ -21,4 +22,5 @@ Structure of the project:
 - `image_managing.py` containing  
 - `watermark_embedding_extraction.py` containing
 - `metrics.py` containing
-- `attacks_on_watermark.py` contaning
+- `attacks_on_watermark.py` containing
+- `utils.py` containing
