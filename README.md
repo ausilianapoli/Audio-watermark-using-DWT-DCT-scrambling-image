@@ -24,3 +24,7 @@ Structure of the project:
 - `metrics.py` containing
 - `attacks_on_watermark.py` containing
 - `utils.py` containing
+
+## Wavelets
+DWT are: DWT: haar, db, bior, coif, rbio, sym, dmey
+CWT are: cgau, gaus, mexh, morl, shan, cmor, fbsp
