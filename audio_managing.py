@@ -54,6 +54,7 @@ def printMetadata(entry):
 def isMono(dataAudio):
     return (True if len(dataAudio.shape) == 1 else False)
 
+#Normalize data signal in int16 suitable for wav library
 def normalizeForWav(data):
     return np.int16(data)
 
@@ -113,20 +114,23 @@ def filterWaveletsFamilies(families):
     DWTFamilies = list(filter(lambda w: w in DWT_SET, families))
     return DWTFamilies
 
-#Multilevel DWT
+#Multilevel  decomposition DWT
 def DWT(data, wavelet, mode, level):
     coeffs = pywt.wavedec(data, wavelet, mode, level)
     #cA2, cD2, cD1 = coeffs
     return coeffs
 
+#Multilevel recomposition DWT
 def iDWT(coeffs, wavelet, mode):
     data = pywt.waverec(coeffs, wavelet, mode)
     return data
 
+#Get DCT of data
 def DCT(data):
     dctData = dct(data, type = 1, norm = "ortho")
     return dctData
 
+#Get inverse of DCT of data
 def iDCT(data):
     idctData = idct(data, type = 1, norm = "ortho")
     return idctData
