@@ -38,10 +38,18 @@ def makeFileName(prefix, path):
 def setLastBit(number, bit):
     return ((number >> 1) << 1) | bit
 
+def getLastBit(number):
+    if number == 0:
+        return 0
+    
+    bits = math.ceil(math.log(number,2)) + 1
+    bNumber = decToBinary(number,bits)
+    return bNumber[-1:]
+
 #Return a string containing the number written in binary notation with bits bit
-def numberToBinary(number, bits):
-    if number >= 2**bits:
-        print("NUMBER TO BINARY: Insufficient number of bit!")
+def decToBinary(number, bits):
+    if number > 2**bits:
+        print("DEC TO BINARY: Insufficient number of bit!")
         return
 
     binary = ""
@@ -54,4 +62,14 @@ def numberToBinary(number, bits):
             binary += str(0)
     
     return binary[::-1]
+
+#Return a int from a string containing the number written in binary notation
+def binaryToDec(number):
+    somma = 0
+    number = number[::-1]
+    for i in range(len(number)):
+        somma += int(number[i]) * 2**i
+        
+    return somma
+
 

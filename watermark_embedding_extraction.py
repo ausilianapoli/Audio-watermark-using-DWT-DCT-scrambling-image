@@ -1,45 +1,83 @@
-from utils import setLastBit, numberToBinary
+from utils import setLastBit, getLastBit, decToBinary, binaryToDec
 from PIL import Image
 from audio_managing import frameToAudio
 import numpy as np
 
-def leastSignificantBit(audio, image):
+def LSB(audio, image):
+    
     if image.mode is not "1":
         print("LEAST SIGNIFICANT BIT: Image must be binary!")
         return
     
     #Verify if audio is divided in frames
-    if type(audio[0][0]) is not int:
+    if type(audio[0]) is int:
+        numOfFrames = -1 #Audio is not divided in frame  
+        joinAudio = audio
+    else:
         numOfFrames = audio.shape[0]
         joinAudio = frameToAudio(audio)
-        frames = 1
-    else:
-        numOfFrames = -1 #Audio is not divided in frame  
 
-    width, heigth = image.size
-    audioLen = joinAudio.shape[0]
+    width, height = image.size
+    audioLen = len(joinAudio)
     
-    if (width * heigth) + 32 >= audioLen:
+    if (width * height) + 32 >= audioLen:
         print("LEAST SIGNIFICANT BIT: Cover dimension is not sufficient for this payload size!")
         return
 
-    bWidth = numberToBinary(width, 16)
-    bHeigth = numberToBinary(heigth, 16)
+    bWidth = decToBinary(width, 16)
+    bHeight = decToBinary(height, 16)
 
     #Embedding width and heigth
     for w in range(16):
-        joinAudio[w] = setLastBit(joinAudio[w],bWidth[w])
-        joinAudio[w+16] = setLastBit(joinAudio[w+16],bHeigth[w])
+        joinAudio[w] = setLastBit(joinAudio[w],int(bWidth[w]))
+        joinAudio[w+16] = setLastBit(joinAudio[w+16],int(bHeight[w]))
 
     #Embedding watermark
     for i in range(width):
-        for j in range(heigth):
+        for j in range(height):
             value = image.getpixel(xy=(i,j))
             x = i*width + j
             joinAudio[x + 32] = setLastBit(joinAudio[x + 32],value)
 
     if numOfFrames is not -1:
-        return audioToFrame(joinAudio)
+        return audioToFrame(joinAudio, numOfFrames)
     else:
         return joinAudio
     
+
+def iLSB(audio):
+    #Verify if audio is divided in frames
+    if type(audio[0]) is int:
+        numOfFrames = -1 #Audio is not divided in frame  
+        joinAudio = audio
+    else:
+        numOfFrames = audio.shape[0]
+        joinAudio = frameToAudio(audio)
+    
+    bWidth, bHeight = ("","")
+
+    #Extraction of width and height
+    for w in range(16):
+        bWidth += str(getLastBit(joinAudio[w]))
+        bHeight += str(getLastBit(joinAudio[w+16]))
+
+    width = binaryToDec(bWidth)
+    height = binaryToDec(bHeight)
+    
+    image = Image.new("1",(width,height))
+
+    #Embedding watermark
+    for i in range(width):
+        for j in range(height):
+            x = i*width + j
+            value = int(getLastBit(joinAudio[x+32]))
+            image.putpixel(xy=(i,j),value=value)
+
+    return image
+    
+
+audio = [1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,5,6,7]
+image = np.matrix([[1,0,0],[0,1,0],[0,1,1]])
+
+lsb = LSB(audio,Image.fromarray(image))
+print(np.array(iLSB(lsb)))
