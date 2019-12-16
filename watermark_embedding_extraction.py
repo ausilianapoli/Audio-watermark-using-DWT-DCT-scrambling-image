@@ -70,14 +70,8 @@ def iLSB(audio):
     for i in range(width):
         for j in range(height):
             x = i*width + j
-            value = int(getLastBit(joinAudio[x+32]))
+            value = getLastBit(joinAudio[x+32])
             image.putpixel(xy=(i,j),value=value)
 
     return image
     
-
-audio = [1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,5,6,7]
-image = np.matrix([[1,0,0],[0,1,0],[0,1,1]])
-
-lsb = LSB(audio,Image.fromarray(image))
-print(np.array(iLSB(lsb)))

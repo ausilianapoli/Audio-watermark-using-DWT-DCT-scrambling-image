@@ -39,12 +39,7 @@ def setLastBit(number, bit):
     return ((number >> 1) << 1) | bit
 
 def getLastBit(number):
-    if number == 0:
-        return 0
-    
-    bits = math.ceil(math.log(number,2)) + 1
-    bNumber = decToBinary(number,bits)
-    return bNumber[-1:]
+    return number % 2
 
 #Return a string containing the number written in binary notation with bits bit
 def decToBinary(number, bits):
