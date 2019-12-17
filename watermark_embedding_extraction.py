@@ -2,6 +2,9 @@ from utils import setLastBit, getLastBit, decToBinary, binaryToDec
 from PIL import Image
 from audio_managing import frameToAudio
 import numpy as np
+import math
+
+ALPHA = 0.001
 
 def LSB(audio, image):
     
@@ -75,3 +78,37 @@ def iLSB(audio):
 
     return image
     
+def magnitudoDCT(coeffs, watermark, alpha):
+    wCoeffs = []
+    if(len(coeffs) == len(watermark)):
+        for i in range(len(coeffs)):
+            wCoeffs.append(((coeffs[i])*(1 + alpha*watermark[i])))
+        return wCoeffs
+    else:
+        print("magnitudoDCT: error because DCT coefficients and watermark coefficients must have same length")
+        return None
+    
+        
+def imagnitudoDCT(coeffs, wCoeffs, alpha):
+    watermark = []
+    for i in range(len(coeffs)):
+        watermark.append(math.ceil((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
+    return watermark
+
+def createImgArrayToEmbed(image):
+    width, heigth = image.shape
+    flattedImage = [width, heigth]
+    tmp = np.ravel(image)
+    for i in range(len(tmp)):
+        flattedImage.append(tmp[i])
+    return flattedImage
+
+audio = [1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,5,6,7]
+image = np.matrix([[1,0,0],[0,1,0],[0,1,1]])
+
+flattedImage = createImgArrayToEmbed(image)
+print(flattedImage)
+wCoeffs = magnitudoDCT(audio[:11], flattedImage, ALPHA)
+print(wCoeffs)
+watermark = imagnitudoDCT(audio[:11], wCoeffs, ALPHA)
+print(watermark)
