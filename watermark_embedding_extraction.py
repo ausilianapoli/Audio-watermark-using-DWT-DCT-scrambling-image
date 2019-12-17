@@ -39,7 +39,7 @@ def LSB(audio, image):
     for i in range(width):
         for j in range(height):
             value = image.getpixel(xy=(i,j))
-            x = i*width + j
+            x = i*height + j
             joinAudio[x + 32] = setLastBit(joinAudio[x + 32],value)
 
     if numOfFrames is not -1:
@@ -69,10 +69,10 @@ def iLSB(audio):
     
     image = Image.new("1",(width,height))
 
-    #Embedding watermark
+    #Extraction watermark
     for i in range(width):
         for j in range(height):
-            x = i*width + j
+            x = i*height + j
             value = getLastBit(joinAudio[x+32])
             image.putpixel(xy=(i,j),value=value)
 
@@ -104,7 +104,10 @@ def createImgArrayToEmbed(image):
     return flattedImage
 
 audio = [1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,5,6,7]
-image = np.matrix([[1,0,0],[0,1,0],[0,1,1]])
+image = Image.new("1",(3,4))
+image.putpixel(xy=(1,2),value=1)
+lsb = LSB(audio,image)
+print(np.asarray(iLSB(lsb)))
 
 flattedImage = createImgArrayToEmbed(image)
 print(flattedImage)
@@ -112,3 +115,4 @@ wCoeffs = magnitudoDCT(audio[:11], flattedImage, ALPHA)
 print(wCoeffs)
 watermark = imagnitudoDCT(audio[:11], wCoeffs, ALPHA)
 print(watermark)
+
