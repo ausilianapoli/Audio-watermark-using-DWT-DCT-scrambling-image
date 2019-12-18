@@ -43,8 +43,7 @@ def sizeExtraction(audio):
     return width, height
 
 def LSB(audio, image):   
-    if image.mode is not "1":
-        image = binarization(image)
+    image = isImgBinary(image)
     
     #Verify if audio is divided in frames
     if type(audio[0]) is int:
@@ -100,8 +99,7 @@ def iLSB(audio):
 
 #Delta embedding mixed with LSB technique for embedding of width and height
 def deltaDCT(coeffs, image):
-    if image.mode is not "L":
-        image = grayscale(image)
+    image = isImgGrayScale(image)
     
     #Verify if audio is divided in frames
     if type(coeffs[0]) is int:
