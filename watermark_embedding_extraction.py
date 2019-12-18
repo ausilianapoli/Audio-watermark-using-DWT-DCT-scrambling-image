@@ -5,7 +5,17 @@ from image_managing import binarization, grayscale
 import numpy as np
 import math
 
-ALPHA = 0.001
+ALPHA = 0.1
+
+def isImgGrayScale(image):
+    if image.mode != "L":
+        image = grayscale(image)
+    return image
+
+def isImgBinary(image):
+    if image.mode != "1":
+        image = binarization(image)
+    return image
 
 #Embedding of width and height. Audio must be linear and not frames
 def sizeEmbedding(audio, width, height):
@@ -145,6 +155,11 @@ def ideltaDCT(coeffs, wCoeffs):
             extracted.putpixel(xy=(i,j),value=value)
 
 def magnitudoDCT(coeffs, watermark, alpha):
+    watermark = isImgBinary(watermark)
+    print(np.asarray(watermark))
+    watermark = createImgArrayToEmbed(watermark)
+    print(watermark)
+    coeffs = coeffs[:len(watermark)]
     wCoeffs = []
     if(len(coeffs) == len(watermark)):
         for i in range(len(coeffs)):
@@ -153,21 +168,26 @@ def magnitudoDCT(coeffs, watermark, alpha):
     else:
         print("magnitudoDCT: error because DCT coefficients and watermark coefficients must have same length")
         return None
-    
         
 def imagnitudoDCT(coeffs, wCoeffs, alpha):
     watermark = []
     for i in range(len(coeffs)):
-        watermark.append(math.ceil((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
+        #watermark.append(math.ceil((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
+        watermark.append(wCoeffs[i] - coeffs[i])
     return watermark
 
 def createImgArrayToEmbed(image):
-    width, heigth = image.shape
+    width, heigth = image.size
     flattedImage = [width, heigth]
     tmp = np.ravel(image)
     for i in range(len(tmp)):
         flattedImage.append(tmp[i])
     return flattedImage
+
+'''
+TESTING
+'''
+
 
 audio = [1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,5,6,7]
 image = Image.new("1",(3,4))
@@ -175,10 +195,12 @@ image.putpixel(xy=(1,2),value=1)
 lsb = LSB(audio,image)
 print(np.asarray(iLSB(lsb)))
 
-flattedImage = createImgArrayToEmbed(image)
-print(flattedImage)
-wCoeffs = magnitudoDCT(audio[:11], flattedImage, ALPHA)
-print(wCoeffs)
-watermark = imagnitudoDCT(audio[:11], wCoeffs, ALPHA)
-print(watermark)
+#flattedImage = createImgArrayToEmbed(image)
+#print("flatted image: ", flattedImage)
+#lenFlattedImage = len(flattedImage)
+#coeffs = audio[:lenFlattedImage]
+wCoeffs = magnitudoDCT(audio, image, ALPHA)
+print("watermarked coeffs: ", wCoeffs)
+watermark = imagnitudoDCT(audio[:len(wCoeffs)], wCoeffs, ALPHA)
+print("extracted watermark: ", watermark)
 
