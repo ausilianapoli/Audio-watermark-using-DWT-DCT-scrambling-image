@@ -67,4 +67,7 @@ def binaryToDec(number):
         
     return somma
 
+#Normalize numbers with a range [0,range] in [0,1]
+def normalize(number, range):
+    return number/range
 
