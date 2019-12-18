@@ -40,9 +40,14 @@ def grayscale(img):
 def binarization(img):
     return img.convert(mode="1",dither=0)
 
+#Return image size
+def imgSize(img):
+    width, heigth = img.size
+    return width, heigth
+
 #Arnold transform
 def arnoldTransform(img, iteration):
-    width, heigth = img.size
+    width, heigth = imgSize(img)
     if width != heigth:
         print("ARNOLD TRANSFORM: Image must be square!")
         return
@@ -65,7 +70,7 @@ def arnoldTransform(img, iteration):
 
 #Inverse Arnold transform
 def iarnoldTransform(img, iteration):
-    width, heigth = img.size
+    width, heigth = imgSize(img)
     if width != heigth:
         print("IARNOLD TRANSFORM: Image must be square!")
         return
@@ -86,7 +91,7 @@ def iarnoldTransform(img, iteration):
 
 #2D lower triangular mapping
 def lowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
-    width, heigth = img.size
+    width, heigth = imgSize(img)
     coprime_mode = "first"
     if a == -1 and d == -1:
         a = coprime(width, coprime_mode)
@@ -110,7 +115,7 @@ def lowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
     
 #2D inverse lower triangular mapping
 def ilowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
-    width, heigth = img.size
+    width, heigth = imgSize(img)
     coprime_mode = "first"
     if a == -1 and d == -1:
         a = coprime(width, coprime_mode)
@@ -134,7 +139,7 @@ def ilowerTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
 
 #2D upper triangular mapping
 def upperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
-    width, heigth = img.size
+    width, heigth = imgSize(img)
     coprime_mode = "first"
     if a == -1 and d == -1:
         a = coprime(width, coprime_mode)
@@ -158,7 +163,7 @@ def upperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
     
 #2D inverse upper triangular mapping
 def iupperTriangularMappingTransform(img, iteration, c, a=-1, d=-1):
-    width, heigth = img.size
+    width, heigth = imgSize(img)
     coprime_mode = "first"
     if a == -1 and d == -1:
         a = coprime(width, coprime_mode)
