@@ -7,11 +7,13 @@ import math
 
 ALPHA = 0.1
 
+#Check if the image is in grayscale and covert it in this mode
 def isImgGrayScale(image):
     if image.mode != "L":
         image = grayscale(image)
     return image
 
+#Check if the image is in binary and covert it in this mode
 def isImgBinary(image):
     if image.mode != "1":
         image = binarization(image)
@@ -41,6 +43,21 @@ def sizeExtraction(audio):
     height = binaryToDec(bHeight)
 
     return width, height
+
+#Check if audio is divided in frames:
+    # if true, it joins audio and then the reverse will be called
+    # if false, it does nothing
+def isJoinedAudio(audio):
+    if type(audio[0]) in (int, float):
+        numOfFrames = -1 #Audio is not divided in frame  
+        joinAudio = audio
+    else:
+        numOfFrames = audio.shape[0]
+        joinAudio = frameToAudio(audio)
+    return joinAudio, numOfFrames
+
+def iisJoinedAudio(audio):
+    return audioToFrame(joinAudio, numOfFrames)
 
 def LSB(audio, image):   
     image = isImgBinary(image)
@@ -152,28 +169,38 @@ def ideltaDCT(coeffs, wCoeffs):
             value = coeffs[x] - image.getpixel(xy=(i,j))
             extracted.putpixel(xy=(i,j),value=value)
 
+#The watermark is embedded into k coefficents of greater magnitudo
 def magnitudoDCT(coeffs, watermark, alpha):
     watermark = isImgBinary(watermark)
     print(np.asarray(watermark))
     watermark = createImgArrayToEmbed(watermark)
     print(watermark)
-    coeffs = coeffs[:len(watermark)]
+    coeffs, joinFlag = isJoinedAudio(coeffs)
+    coeffs = coeffs[:len(watermark)] #to delete for main.py
     wCoeffs = []
     if(len(coeffs) == len(watermark)):
         for i in range(len(coeffs)):
             wCoeffs.append(((coeffs[i])*(1 + alpha*watermark[i])))
+        #wCoeffs = np.asarray(wCoeffs)
+        if joinFlag != -1:
+            wCoeffs = iisJoinedAudio(wCoeffs)
         return wCoeffs
     else:
         print("magnitudoDCT: error because DCT coefficients and watermark coefficients must have same length")
         return None
-        
+
+#The extraction of watermark from k coefficents of greater magnitudo       
 def imagnitudoDCT(coeffs, wCoeffs, alpha):
+    coeffs, joinCoeffsFlag = isJoinedAudio(coeffs)
+    wcoeffs, joinWCoeffsFlag = isJoinedAudio(wCoeffs)
+    coeffs = coeffs[:len(wCoeffs)]
     watermark = []
     for i in range(len(coeffs)):
         #watermark.append(math.ceil((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
         watermark.append(wCoeffs[i] - coeffs[i])
     return watermark
 
+#Routine procedure to embedd the shape of image into flatted array of it
 def createImgArrayToEmbed(image):
     width, heigth = image.size
     flattedImage = [width, heigth]
@@ -199,6 +226,6 @@ print(np.asarray(iLSB(lsb)))
 #coeffs = audio[:lenFlattedImage]
 wCoeffs = magnitudoDCT(audio, image, ALPHA)
 print("watermarked coeffs: ", wCoeffs)
-watermark = imagnitudoDCT(audio[:len(wCoeffs)], wCoeffs, ALPHA)
+watermark = imagnitudoDCT(audio, wCoeffs, ALPHA) #the parameter len is for the length of audio signals and it must be reviewd in main.py
 print("extracted watermark: ", watermark)
 
