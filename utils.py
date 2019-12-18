@@ -39,7 +39,7 @@ def setLastBit(number, bit):
     return ((number >> 1) << 1) | bit
 
 def getLastBit(number):
-    return number % 2
+    return int(number % 2)
 
 #Return a string containing the number written in binary notation with bits bit
 def decToBinary(number, bits):
@@ -71,3 +71,5 @@ def binaryToDec(number):
 def normalize(number, range):
     return number/range
 
+def inormalize(number, range):
+    return int(number*255)

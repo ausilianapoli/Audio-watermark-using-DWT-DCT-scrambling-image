@@ -42,7 +42,10 @@ def binarization(img):
 
 #Return image size
 def imgSize(img):
-    width, heigth = img.size
+    if type(img) is np.ndarray:
+        width, height = (img.shape[1], img.shape[0])
+    else:
+        width, heigth = img.size
     return width, heigth
 
 #Arnold transform
@@ -210,29 +213,29 @@ def imappingTransform(mode, img, iteration, c, a=-1, d=-1):
 '''
 TESTING
 '''
+if __name__ == "__main__":
+    img = loadImage("right.png")
+    imgr = loadImage("07.jpg")
+    imgr = binarization(imgr)
 
-img = loadImage("right.png")
-imgr = loadImage("07.jpg")
-imgr = binarization(imgr)
+    """
+    t = arnoldTransform(img,iteration=1)
+    showImage(t)
 
-"""
-t = arnoldTransform(img,iteration=1)
-showImage(t)
+    it = iarnoldTransform(t,iteration=1)
+    showImage(it)
 
-it = iarnoldTransform(t,iteration=1)
-showImage(it)
+    m = mappingTransform(mode="lower",img=imgr,iteration=1,c=3,a=5)
+    showImage(m)
+    #saveImage(m, "triangular_2_iterations.png")
 
-m = mappingTransform(mode="lower",img=imgr,iteration=1,c=3,a=5)
-showImage(m)
-#saveImage(m, "triangular_2_iterations.png")
+    im = imappingTransform(mode="lower",img=m,iteration=1,c=3,a=5)
+    showImage(im)
 
-im = imappingTransform(mode="lower",img=m,iteration=1,c=3,a=5)
-showImage(im)
+    m1 = mappingTransform(mode="upper",img=imgr,iteration=1,c=3)
+    showImage(m1)
+    #saveImage(m, "triangular_2_iterations.png")
 
-m1 = mappingTransform(mode="upper",img=imgr,iteration=1,c=3)
-showImage(m1)
-#saveImage(m, "triangular_2_iterations.png")
-
-im1 = imappingTransform(mode="upper",img=m1,iteration=1,c=3)
-showImage(im1)
-"""
+    im1 = imappingTransform(mode="upper",img=m1,iteration=1,c=3)
+    showImage(im1)
+    """

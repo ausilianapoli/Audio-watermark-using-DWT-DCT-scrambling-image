@@ -1,4 +1,4 @@
-from utils import setLastBit, getLastBit, decToBinary, binaryToDec
+from utils import setLastBit, getLastBit, decToBinary, binaryToDec, normalize, inormalize
 from PIL import Image
 from audio_managing import frameToAudio
 from image_managing import binarization, grayscale, imgSize
@@ -24,12 +24,14 @@ def sizeEmbedding(audio, width, height):
     bWidth = decToBinary(width, 16)
     bHeight = decToBinary(height, 16)
 
+    embedded = audio.copy()
+
     #Embedding width and heigth
     for w in range(16):
-        audio[w] = setLastBit(audio[w],int(bWidth[w]))
-        audio[w+16] = setLastBit(audio[w+16],int(bHeight[w]))
+        embedded[w] = setLastBit(embedded[w],int(bWidth[w]))
+        embedded[w+16] = setLastBit(embedded[w+16],int(bHeight[w]))
 
-    return audio
+    return embedded
 
 def sizeExtraction(audio):
     bWidth, bHeight = ("","")
@@ -48,9 +50,9 @@ def sizeExtraction(audio):
     # if true, it joins audio and then the reverse will be called
     # if false, it does nothing
 def isJoinedAudio(audio):
-    if type(audio[0]) in (int, float):
+    if type(audio[0]) in (np.int16, np.float64, int, float):
         numOfFrames = -1 #Audio is not divided in frame  
-        joinAudio = audio
+        joinAudio = audio.copy()
     else:
         numOfFrames = audio.shape[0]
         joinAudio = frameToAudio(audio)
@@ -60,17 +62,9 @@ def iisJoinedAudio(audio):
     return audioToFrame(joinAudio, numOfFrames)
 
 def LSB(audio, image):   
-    image = isImgBinary(image)
-    
-    #Verify if audio is divided in frames
-    if type(audio[0]) is int:
-        numOfFrames = -1 #Audio is not divided in frame  
-        joinAudio = audio
-    else:
-        numOfFrames = audio.shape[0]
-        joinAudio = frameToAudio(audio)
-
-    width, height = image.size
+    image = isImgBinary(image)  
+    joinAudio, numOfFrames = isJoinedAudio(audio)
+    width, height = imgSize(image)
     audioLen = len(joinAudio)
     
     if (width * height) + 32 >= audioLen:
@@ -94,15 +88,8 @@ def LSB(audio, image):
 
 def iLSB(audio):
     #Verify if audio is divided in frames
-    if type(audio[0]) is int:
-        numOfFrames = -1 #Audio is not divided in frame  
-        joinAudio = audio
-    else:
-        numOfFrames = audio.shape[0]
-        joinAudio = frameToAudio(audio)
-    
+    joinAudio, numOfFrames = isJoinedAudio(audio)
     width, height = sizeExtraction(joinAudio)
-    
     image = Image.new("1",(width,height))
 
     #Extraction watermark
@@ -117,17 +104,9 @@ def iLSB(audio):
 #Delta embedding mixed with LSB technique for embedding of width and height
 def deltaDCT(coeffs, image):
     image = isImgGrayScale(image)
-    
-    #Verify if audio is divided in frames
-    if type(coeffs[0]) is int:
-        numOfFrames = -1 #Audio is not divided in frame  
-        joinCoeffs = coeffs
-    else:
-        numOfFrames = coeffs.shape[0]
-        joinCoeffs = frameToAudio(coeffs)
-
+    joinCoeffs, numOfFrames = isJoinedAudio(coeffs)
     coeffsLen = len(joinCoeffs)
-    width, height = image.size
+    width, height = imgSize(image)
     if (width * height) + 32 >= coeffsLen:
         print("DELTA DCT: Cover dimension is not sufficient for this payload size!")
         return
@@ -140,24 +119,17 @@ def deltaDCT(coeffs, image):
             value = image.getpixel(xy=(i,j))
             x = i*height + j
             joinCoeffs[x+32] = joinCoeffs[x+32] + normalize(value,255)
-
+            
     if numOfFrames is not -1:
         return audioToFrame(joinCoeffs, numOfFrames)
     else:
         return joinCoeffs
 
 def ideltaDCT(coeffs, wCoeffs):
-    #Verify if audio is divided in frames
-    if type(audio[0]) is int:
-        numOfFrames = -1 #Audio is not divided in frame  
-        joinCoeffs = coeffs
-        joinWCoeffs = wCoeffs
-    else:
-        numOfFrames = coeffs.shape[0]
-        joinCoeffs = frameToAudio(coeffs)
-        joinWCoeffs = frameToAudio(wCoeffs)
+    joinCoeffs, numOfFrames = isJoinedAudio(coeffs)
+    joinWCoeffs, _ = isJoinedAudio(wCoeffs)
     
-    width, height = sizeExtraction(joinCoeffs)
+    width, height = sizeExtraction(joinWCoeffs)
 
     extracted = Image.new("L",(width,height))
     coeffsLen = len(coeffs)
@@ -166,9 +138,12 @@ def ideltaDCT(coeffs, wCoeffs):
     for i in range(width):
         for j in range(height):
             x = i*height + j
-            value = coeffs[x] - image.getpixel(xy=(i,j))
+            value = inormalize(abs(joinWCoeffs[x+32] - joinCoeffs[x+32]), 255)
+            #print(abs(joinWCoeffs[x+32] - joinCoeffs[x+32]))
             extracted.putpixel(xy=(i,j),value=value)
 
+    return extracted
+    
 #The watermark is embedded into k coefficents of greater magnitudo
 def magnitudoDCT(coeffs, watermark, alpha):
     watermark = isImgBinary(watermark)
@@ -212,20 +187,24 @@ def createImgArrayToEmbed(image):
 '''
 TESTING
 '''
+if __name__ == "__main__":
 
-
-audio = [1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,5,6,7]
-image = Image.new("1",(3,4))
-image.putpixel(xy=(1,2),value=1)
-lsb = LSB(audio,image)
-print(np.asarray(iLSB(lsb)))
-
-#flattedImage = createImgArrayToEmbed(image)
-#print("flatted image: ", flattedImage)
-#lenFlattedImage = len(flattedImage)
-#coeffs = audio[:lenFlattedImage]
-wCoeffs = magnitudoDCT(audio, image, ALPHA)
-print("watermarked coeffs: ", wCoeffs)
-watermark = imagnitudoDCT(audio, wCoeffs, ALPHA)
-print("extracted watermark: ", watermark)
-
+    audio = [1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,1,5,6,7,8,9,4,5,6,1,3,5,4,7,5,6,7]
+    image = Image.new("1",(3,4))
+    image.putpixel(xy=(1,2),value=1)
+    lsb = LSB(audio,image)
+    print(np.asarray(iLSB(lsb)))
+    image = Image.new("L",(3,4))
+    image.putpixel(xy=(1,2),value=50)
+    delta = deltaDCT(audio, image)
+    print(np.asarray(ideltaDCT(audio, delta)))
+    """
+    #flattedImage = createImgArrayToEmbed(image)
+    #print("flatted image: ", flattedImage)
+    #lenFlattedImage = len(flattedImage)
+    #coeffs = audio[:lenFlattedImage]
+    wCoeffs = magnitudoDCT(audio, image, ALPHA)
+    print("watermarked coeffs: ", wCoeffs)
+    watermark = imagnitudoDCT(audio, wCoeffs, ALPHA)
+    print("extracted watermark: ", watermark)
+    """

@@ -77,6 +77,9 @@ def joinAudioChannels(path):
     tupleMono = readWavFile(outPath)
     return tupleMono
 
+def audioData(audio):
+    return audio[AUDIO_DATA]
+
 #Divide audio in frames
 def audioToFrame(audio, len):
     numFrames = math.ceil(audio.shape[0]/len)
