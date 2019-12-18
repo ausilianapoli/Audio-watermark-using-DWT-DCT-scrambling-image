@@ -226,6 +226,6 @@ print(np.asarray(iLSB(lsb)))
 #coeffs = audio[:lenFlattedImage]
 wCoeffs = magnitudoDCT(audio, image, ALPHA)
 print("watermarked coeffs: ", wCoeffs)
-watermark = imagnitudoDCT(audio, wCoeffs, ALPHA) #the parameter len is for the length of audio signals and it must be reviewd in main.py
+watermark = imagnitudoDCT(audio, wCoeffs, ALPHA)
 print("extracted watermark: ", watermark)
 
