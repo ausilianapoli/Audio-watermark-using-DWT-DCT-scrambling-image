@@ -1,7 +1,7 @@
 from utils import setLastBit, getLastBit, decToBinary, binaryToDec
 from PIL import Image
 from audio_managing import frameToAudio
-from image_managing import binarization, grayscale
+from image_managing import binarization, grayscale, imgSize
 import numpy as np
 import math
 
@@ -202,7 +202,7 @@ def imagnitudoDCT(coeffs, wCoeffs, alpha):
 
 #Routine procedure to embedd the shape of image into flatted array of it
 def createImgArrayToEmbed(image):
-    width, heigth = image.size
+    width, heigth = imgSize(image)
     flattedImage = [width, heigth]
     tmp = np.ravel(image)
     for i in range(len(tmp)):
