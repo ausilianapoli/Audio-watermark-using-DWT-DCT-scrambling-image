@@ -19,32 +19,32 @@ def isImgBinary(image):
         image = binarization(image)
     return image
 
-#Embedding of width and height. Audio must be linear and not frames
-def sizeEmbedding(audio, width, height):
+#Embedding of width and heigth. Audio must be linear and not frames
+def sizeEmbedding(audio, width, heigth):
     bWidth = decToBinary(width, 16)
-    bHeight = decToBinary(height, 16)
+    bheigth = decToBinary(heigth, 16)
 
     embedded = audio.copy()
 
     #Embedding width and heigth
     for w in range(16):
         embedded[w] = setLastBit(embedded[w],int(bWidth[w]))
-        embedded[w+16] = setLastBit(embedded[w+16],int(bHeight[w]))
+        embedded[w+16] = setLastBit(embedded[w+16],int(bheigth[w]))
 
     return embedded
 
 def sizeExtraction(audio):
-    bWidth, bHeight = ("","")
+    bWidth, bheigth = ("","")
 
-    #Extraction of width and height
+    #Extraction of width and heigth
     for w in range(16):
         bWidth += str(getLastBit(audio[w]))
-        bHeight += str(getLastBit(audio[w+16]))
+        bheigth += str(getLastBit(audio[w+16]))
 
     width = binaryToDec(bWidth)
-    height = binaryToDec(bHeight)
+    heigth = binaryToDec(bheigth)
 
-    return width, height
+    return width, heigth
 
 #Check if audio is divided in frames:
     # if true, it joins audio and then the inverse will be called
@@ -64,21 +64,21 @@ def iisJoinedAudio(audio):
 def LSB(audio, image):   
     image = isImgBinary(image)  
     joinAudio, numOfFrames = isJoinedAudio(audio)
-    width, height = imgSize(image)
+    width, heigth = imgSize(image)
     audioLen = len(joinAudio)
     
-    if (width * height) + 32 >= audioLen:
+    if (width * heigth) + 32 >= audioLen:
         print("LEAST SIGNIFICANT BIT: Cover dimension is not sufficient for this payload size!")
         return
 
-    joinAudio = sizeEmbedding(joinAudio, width, height)
+    joinAudio = sizeEmbedding(joinAudio, width, heigth)
 
     #Embedding watermark
     for i in range(width):
-        for j in range(height):
+        for j in range(heigth):
             value = image.getpixel(xy=(i,j))
             value = 1 if value == 255 else 0
-            x = i*height + j
+            x = i*heigth + j
             joinAudio[x + 32] = setLastBit(joinAudio[x + 32],value)
 
     if numOfFrames is not -1:
@@ -90,35 +90,35 @@ def LSB(audio, image):
 def iLSB(audio):
     #Verify if audio is divided in frames
     joinAudio, numOfFrames = isJoinedAudio(audio)
-    width, height = sizeExtraction(joinAudio)
-    image = Image.new("1",(width,height))
+    width, heigth = sizeExtraction(joinAudio)
+    image = Image.new("1",(width,heigth))
 
     #Extraction watermark
     for i in range(width):
-        for j in range(height):
-            x = i*height + j
+        for j in range(heigth):
+            x = i*heigth + j
             value = getLastBit(joinAudio[x+32])
             image.putpixel(xy=(i,j),value=value)
 
     return image
 
-#Delta embedding mixed with LSB technique for embedding of width and height
+#Delta embedding mixed with LSB technique for embedding of width and heigth
 def deltaDCT(coeffs, image):
     image = isImgGrayScale(image)
     joinCoeffs, numOfFrames = isJoinedAudio(coeffs)
     coeffsLen = len(joinCoeffs)
-    width, height = imgSize(image)
-    if (width * height) + 32 >= coeffsLen:
+    width, heigth = imgSize(image)
+    if (width * heigth) + 32 >= coeffsLen:
         print("DELTA DCT: Cover dimension is not sufficient for this payload size!")
         return
 
-    joinCoeffs = sizeEmbedding(joinCoeffs, width, height)
+    joinCoeffs = sizeEmbedding(joinCoeffs, width, heigth)
 
     #Embedding watermark
     for i in range(width):
-        for j in range(height):
+        for j in range(heigth):
             value = image.getpixel(xy=(i,j))
-            x = i*height + j
+            x = i*heigth + j
             joinCoeffs[x+32] = joinCoeffs[x+32] + normalize(value,255)
             
     if numOfFrames is not -1:
@@ -130,15 +130,15 @@ def ideltaDCT(coeffs, wCoeffs):
     joinCoeffs, numOfFrames = isJoinedAudio(coeffs)
     joinWCoeffs, _ = isJoinedAudio(wCoeffs)
     
-    width, height = sizeExtraction(joinWCoeffs)
+    width, heigth = sizeExtraction(joinWCoeffs)
 
-    extracted = Image.new("L",(width,height))
+    extracted = Image.new("L",(width,heigth))
     coeffsLen = len(coeffs)
 
     #Extraction watermark
     for i in range(width):
-        for j in range(height):
-            x = i*height + j
+        for j in range(heigth):
+            x = i*heigth + j
             value = inormalize(abs(joinWCoeffs[x+32] - joinCoeffs[x+32]), 255)
             #print(abs(joinWCoeffs[x+32] - joinCoeffs[x+32]))
             extracted.putpixel(xy=(i,j),value=value)

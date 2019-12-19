@@ -43,7 +43,7 @@ def binarization(img):
 #Return image size
 def imgSize(img):
     if type(img) is np.ndarray:
-        width, height = (img.shape[1], img.shape[0])
+        width, heigth = (img.shape[1], img.shape[0])
     else:
         width, heigth = img.size
     return width, heigth
