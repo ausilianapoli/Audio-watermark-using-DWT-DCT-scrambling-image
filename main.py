@@ -25,7 +25,7 @@ NO_ITERATIONS = 1
 TRIANGULAR_PARAMETERS = [5, 3, 1] #c,a,d
 
 #embedding
-ALPHA = 0.001
+ALPHA = 0.005
 
 def getAudio(path):
     tupleAudio = am.readWavFile(path)
@@ -56,7 +56,7 @@ def getScrambling(path, type, mode = BINARY):
 
 def getStego(data, tupleAudio):
     nData = am.normalizeForWav(data)
-    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, "stego-magnitudo0001")     
+    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, "stego-magnitudo0005")     
     
 def embedding(scramblingMode, imageMode, embeddingMode, frames = 0):
     #1 load audio file
