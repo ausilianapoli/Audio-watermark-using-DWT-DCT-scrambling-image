@@ -171,12 +171,17 @@ def imagnitudoDCT(coeffs, wCoeffs, alpha):
     for i in range(len(wCoeffs)):
         watermark.append(math.floor((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
         #watermark.append(math.ceil(wCoeffs[i] - coeffs[i]))
-    watermark = extractImage(watermark)
-    return watermark
+    return createImgMatrix(extractImage(watermark))
 
 def extractImage(watermark):
     nPixel = (watermark[0]*watermark[1])+2
     return watermark[:nPixel]
+
+def createImgMatrix(image):
+    width = image[0]
+    heigth = image[1]
+    matrixImg = np.reshape(image[2:], (width, heigth))
+    return matrixImg
 
 #Routine procedure to embedd the shape of image into flatted array of it
 def createImgArrayToEmbed(image):
