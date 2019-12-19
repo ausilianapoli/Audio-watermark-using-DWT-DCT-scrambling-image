@@ -5,18 +5,48 @@ import watermark_embedding_extraction as watermark
 
 WAVELETS_LEVEL = 2
 
-if __name__ == "__main__":
-    tupleAudio = am.readWavFile("mono-piano.wav")
+def getAudio(path):
+    tupleAudio = am.readWavFile(path)
     audioData = am.audioData(tupleAudio)
-    
-    #Inglobare tutto questo in una singola funzione
+    if am.isMono(audioData) == False:
+        tupleAudio = am.joinAudioChannels(path)
+        audioData = am.audioData(tupleAudio)
+    return audioData
+
+def getDWT(type, mode):
     waveletsFamilies = am.getWaveletsFamilies()
     DWTFamilies = am.filterWaveletsFamilies(waveletsFamilies)
     waveletsModes = am.getWaveletsModes()
-    coeffs = am.DWT(audioData, DWTFamilies[DWTFamilies.index("haar")], waveletsModes[waveletsModes.index("symmetric")], WAVELETS_LEVEL)
+    coeffs = am.DWT(audioData, DWTFamilies[DWTFamilies.index(type)], waveletsModes[waveletsModes.index(mode)], WAVELETS_LEVEL)
     cA2, cD2, cD1 = coeffs
-    dctCoeff = am.DCT(cA2)
-    print(type(dctCoeff[0]))
+    return cA2
+
+if __name__ == "__main__":
+    
+    #1 load audio file
+    audioData = getAudio("mono-piano.wav")
+    
+    #2 run DWT on audio file
+    approxCoeffsDWT = getDWT("haar", "symmetric")
+    
+    #3 divide by frame
+    
+    #4 run DCT on DWT coeffs   
+    DCTCoeffs = am.DCT(approxCoeffsDWT)
+    
+    #5 scrambling image watermark
+    
+    #6 embedd watermark image
+    
+    #7 run iDCT
+    
+    #8 join audio frames
+    
+    #9 run iDWT
+    
+    #10 save new audio file
+    
+    #print(type(dctCoeffs[0]))
     
     """
     img = im.loadImage("right.png")
