@@ -151,17 +151,15 @@ def magnitudoDCT(coeffs, watermark, alpha):
     watermark = createImgArrayToEmbed(watermark)
     #print(watermark)
     coeffs, joinFlag = isJoinedAudio(coeffs)
-    coeffs = coeffs[:len(watermark)] #to delete for main.py
+    #coeffs = coeffs[:len(watermark)] #to delete for main.py
     wCoeffs = []
-    if(len(coeffs) == len(watermark)):
-        for i in range(len(coeffs)):
-            wCoeffs.append((coeffs[i])*(1 + alpha*watermark[i]))
-        if joinFlag != -1:
-            wCoeffs = iisJoinedAudio(wCoeffs)
-        return wCoeffs
-    else:
-        print("magnitudoDCT: error because DCT coefficients and watermark coefficients must have same length")
-        return None
+    for i in range(len(watermark)):
+        wCoeffs.append((coeffs[i])*(1 + alpha*watermark[i]))
+    for i in range(len(watermark), len(coeffs)):
+        wCoeffs.append(coeffs[i])
+    if joinFlag != -1:
+        wCoeffs = iisJoinedAudio(wCoeffs)
+    return wCoeffs
 
 #The extraction of watermark from k coefficents of greater magnitudo       
 def imagnitudoDCT(coeffs, wCoeffs, alpha):
@@ -172,9 +170,12 @@ def imagnitudoDCT(coeffs, wCoeffs, alpha):
     for i in range(len(wCoeffs)):
         watermark.append(math.floor((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
         #watermark.append(math.ceil(wCoeffs[i] - coeffs[i]))
-    for i in range(len(wCoeffs), len(coeffs[len(wCoeffs):])):
-        watermark.append(coeffs[i])
+    watermark = extractImage(watermark)
     return watermark
+
+def extractImage(watermark):
+    nPixel = (watermark[0]*watermark[1])+2
+    return watermark[:nPixel]
 
 #Routine procedure to embedd the shape of image into flatted array of it
 def createImgArrayToEmbed(image):
