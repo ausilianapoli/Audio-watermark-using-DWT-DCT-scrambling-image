@@ -56,7 +56,7 @@ def getScrambling(path, type, mode = BINARY):
 
 def getStego(data, tupleAudio):
     nData = am.normalizeForWav(data)
-    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, "stego-frame")     
+    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, "stego-magnitudo01")     
     
 def embedding(scramblingMode, imageMode, embeddingMode, frames = 0):
     #1 load audio file
