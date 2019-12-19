@@ -9,11 +9,11 @@ AUDIO_PATH = "mono-piano.wav"
 T_AUDIO_PATH = 0
 T_SAMPLERATE = 1
 LEN_FRAMES = 1024
-OUTPUT_AUDIO_NAME = "stego-delta"
+OUTPUT_AUDIO_NAME = "stego-magnitudo01"
 
 #image
 IMAGE_PATH = "right.png"
-OUTPUT_IMG_NAME = "delta"
+OUTPUT_IMG_NAME = "magnitudo01"
 
 #DWT
 WAVELETS_LEVEL = 2
@@ -28,7 +28,7 @@ NO_ITERATIONS = 1
 TRIANGULAR_PARAMETERS = [5, 3, 1] #c,a,d
 
 #embedding
-ALPHA = 0.001
+ALPHA = 0.1
 
 def getAudio(path):
     tupleAudio = am.readWavFile(path)
@@ -146,11 +146,13 @@ def extraction(wCoeffs, scramblingMode, embeddingMode, frames = 0):
         
 if __name__ == "__main__":
     
-    #wCoeffs = embedding(0, GRAYSCALE, "magnitudo")
+    wCoeffs = embedding(0, GRAYSCALE, "magnitudo")
     #wCoeffs = embedding(0, BINARY, "lsb")
-    wCoeffs = embedding(0, GRAYSCALE, "delta")
+    #wCoeffs = embedding(0, GRAYSCALE, "delta")
     
-    extraction(wCoeffs, 0, "delta")
+    print(wCoeffs)
+    
+    extraction(wCoeffs, 0, "magnitudo")
     
     """
     img = im.loadImage("right.png")
