@@ -42,7 +42,7 @@ def getLastBit(number):
     return int(number % 2)
 
 #Return a string containing the number written in binary notation with bits bit
-def decToBinary(number, bits):
+def decToBinary(number, bits=16):
     if number > 2**bits:
         print("DEC TO BINARY: Insufficient number of bit!")
         return
