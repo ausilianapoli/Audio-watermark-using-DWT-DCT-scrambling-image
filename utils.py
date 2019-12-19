@@ -30,6 +30,7 @@ def coprime(m, mode="first"):
 
     return 1
 
+#Routine to create path for file to save
 def makeFileName(prefix, path):
     fileName = os.path.basename(path)
     dirName = os.path.dirname(path)
@@ -73,12 +74,6 @@ def decToBinary(number, bits=16):
     elif type(number) in (float, np.float64):
         b = bitstring.BitArray(float=number, length=32).bin
         return b[:9] + " " + b[9:]
-
-def decimal(number):
-    dec = float(number)
-    while dec > 1: 
-        dec /= 10
-    return dec 
 
 #Return a int from a string containing the number written in binary notation
 def binaryToDec(number): 
