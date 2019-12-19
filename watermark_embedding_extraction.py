@@ -166,12 +166,14 @@ def magnitudoDCT(coeffs, watermark, alpha):
 #The extraction of watermark from k coefficents of greater magnitudo       
 def imagnitudoDCT(coeffs, wCoeffs, alpha):
     coeffs, joinCoeffsFlag = isJoinedAudio(coeffs)
-    wcoeffs, joinWCoeffsFlag = isJoinedAudio(wCoeffs)
-    coeffs = coeffs[:len(wCoeffs)]
+    wCoeffs, joinWCoeffsFlag = isJoinedAudio(wCoeffs)
+    #coeffs = coeffs[:len(wCoeffs)]
     watermark = []
-    for i in range(len(coeffs)):
+    for i in range(len(wCoeffs)):
         watermark.append(math.floor((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
         #watermark.append(math.ceil(wCoeffs[i] - coeffs[i]))
+    for i in range(len(wCoeffs), len(coeffs[len(wCoeffs):])):
+        watermark.append(coeffs[i])
     return watermark
 
 #Routine procedure to embedd the shape of image into flatted array of it
