@@ -8,6 +8,7 @@ AUDIO_PATH = "mono-piano.wav"
 T_AUDIO_PATH = 0
 T_SAMPLERATE = 1
 LEN_FRAMES = 1024
+OUTPUT_FILE_NAME = "stego-delta"
 
 #image
 IMAGE_PATH = "right.png"
@@ -56,7 +57,7 @@ def getScrambling(path, type, mode = BINARY):
 
 def getStego(data, tupleAudio):
     nData = am.normalizeForWav(data)
-    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, "stego-delta")     
+    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, OUTPUT_FILE_NAME)     
     
 def embedding(scramblingMode, imageMode, embeddingMode, frames = 0):
     #1 load audio file
