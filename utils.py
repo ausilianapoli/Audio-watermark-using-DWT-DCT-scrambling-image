@@ -1,5 +1,7 @@
 import os
 import math
+import numpy as np
+import bitstring
 
 #Return inverse module m of a
 def imodule(a, m):
@@ -28,7 +30,6 @@ def coprime(m, mode="first"):
 
     return 1
 
-#Routine to create the pathname for file before saving
 def makeFileName(prefix, path):
     fileName = os.path.basename(path)
     dirName = os.path.dirname(path)
@@ -37,36 +38,59 @@ def makeFileName(prefix, path):
     return nPath
 
 def setLastBit(number, bit):
-    return ((number >> 1) << 1) | bit
+    if type(number) in (int, np.int16):
+        return ((number >> 1) << 1) | bit
+    elif type(number) in (float, np.float64):
+        binary = decToBinary(number)
+        binary = binary[:-1] + str(bit)
+        return binaryToDec(binary)
 
 def getLastBit(number):
-    return int(number % 2)
+    if type(number) in (int, np.int16):
+        return int(number % 2)
+    elif type(number) in (float, np.float64):
+        binary = decToBinary(number)
+        return int(binary[-1:])
 
 #Return a string containing the number written in binary notation with bits bit
 def decToBinary(number, bits=16):
-    if number > 2**bits:
-        print("DEC TO BINARY: Insufficient number of bit!")
-        return
+    if type(number) in (int, np.int16):
+        if number > 2**bits:
+            print("DEC TO BINARY: Insufficient number of bit!")
+            return
 
-    binary = ""
-    for i in range(bits):
-        if number != 0:
-            bit = number % 2
-            number = number >> 1
-            binary += str(bit)
-        else:
-            binary += str(0)
-    
-    return binary[::-1]
+        binary = ""
+        for i in range(bits):
+            if number != 0:
+                bit = number % 2
+                number = number >> 1
+                binary += str(bit)
+            else:
+                binary += str(0)
+        
+        return binary[::-1]
+
+    elif type(number) in (float, np.float64):
+        b = bitstring.BitArray(float=number, length=32).bin
+        return b[:9] + " " + b[9:]
+
+def decimal(number):
+    dec = float(number)
+    while dec > 1: 
+        dec /= 10
+    return dec 
 
 #Return a int from a string containing the number written in binary notation
-def binaryToDec(number):
-    somma = 0
-    number = number[::-1]
-    for i in range(len(number)):
-        somma += int(number[i]) * 2**i
-        
-    return somma
+def binaryToDec(number): 
+    if number.find(" ") == -1:
+        somma = 0
+        number = number[::-1]
+        for i in range(len(number)):
+            somma += int(number[i]) * 2**i
+            
+        return somma
+    else:
+        return bitstring.BitArray(bin=number).float
 
 #Normalize numbers with a range [0,range] in [0,1]
 def normalize(number, range):

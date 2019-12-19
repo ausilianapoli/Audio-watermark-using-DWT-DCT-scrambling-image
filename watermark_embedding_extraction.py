@@ -77,6 +77,7 @@ def LSB(audio, image):
     for i in range(width):
         for j in range(height):
             value = image.getpixel(xy=(i,j))
+            value = 1 if value == 255 else 0
             x = i*height + j
             joinAudio[x + 32] = setLastBit(joinAudio[x + 32],value)
 

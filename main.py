@@ -56,7 +56,7 @@ def getScrambling(path, type, mode = BINARY):
 
 def getStego(data, tupleAudio):
     nData = am.normalizeForWav(data)
-    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, "stego-magnitudo0005")     
+    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, "stego-delta")     
     
 def embedding(scramblingMode, imageMode, embeddingMode, frames = 0):
     #1 load audio file
@@ -79,6 +79,10 @@ def embedding(scramblingMode, imageMode, embeddingMode, frames = 0):
     #6 embedd watermark image
     if embeddingMode == "magnitudo":
         wCoeffs = watermark.magnitudoDCT(DCTCoeffs, payload, ALPHA)
+    elif embeddingMode == "lsb":
+        wCoeffs = watermark.LSB(DCTCoeffs, payload)
+    elif embeddingMode == "delta":
+        wCoeffs = watermark.deltaDCT(DCTCoeffs, payload)
     #print(wCoeffs)
     
     #7 run iDCT
@@ -97,9 +101,10 @@ def embedding(scramblingMode, imageMode, embeddingMode, frames = 0):
         
 if __name__ == "__main__":
     
-    embedding(0, GRAYSCALE, "magnitudo")
+    #embedding(0, GRAYSCALE, "magnitudo")
+    #embedding(0, BINARY, "lsb")
+    embedding(0, GRAYSCALE, "delta")
     
-    #print(type(dctCoeffs[0]))
     
     """
     img = im.loadImage("right.png")
