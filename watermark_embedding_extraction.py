@@ -146,17 +146,16 @@ def ideltaDCT(coeffs, wCoeffs):
     
 #The watermark is embedded into k coefficents of greater magnitudo
 def magnitudoDCT(coeffs, watermark, alpha):
-    watermark = isImgBinary(watermark)
-    print(np.asarray(watermark))
+    watermark = isImgGrayScale(watermark)
+    #print(np.asarray(watermark))
     watermark = createImgArrayToEmbed(watermark)
-    print(watermark)
+    #print(watermark)
     coeffs, joinFlag = isJoinedAudio(coeffs)
     coeffs = coeffs[:len(watermark)] #to delete for main.py
     wCoeffs = []
     if(len(coeffs) == len(watermark)):
         for i in range(len(coeffs)):
-            wCoeffs.append(((coeffs[i])*(1 + alpha*watermark[i])))
-        #wCoeffs = np.asarray(wCoeffs)
+            wCoeffs.append((coeffs[i])*(1 + alpha*watermark[i]))
         if joinFlag != -1:
             wCoeffs = iisJoinedAudio(wCoeffs)
         return wCoeffs
@@ -171,8 +170,8 @@ def imagnitudoDCT(coeffs, wCoeffs, alpha):
     coeffs = coeffs[:len(wCoeffs)]
     watermark = []
     for i in range(len(coeffs)):
-        #watermark.append(math.ceil((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
-        watermark.append(wCoeffs[i] - coeffs[i])
+        watermark.append(math.floor((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
+        #watermark.append(math.ceil(wCoeffs[i] - coeffs[i]))
     return watermark
 
 #Routine procedure to embedd the shape of image into flatted array of it
@@ -195,10 +194,14 @@ if __name__ == "__main__":
     lsb = LSB(audio,image)
     print(np.asarray(iLSB(lsb)))
     image = Image.new("L",(3,4))
-    image.putpixel(xy=(1,2),value=50)
+    image.putpixel(xy=(1,2),value=255)
+    image.putpixel(xy=(2,2),value=100)
+    image.putpixel(xy=(1,0),value=150)
+    image.putpixel(xy=(2,3),value=55)
+    image.putpixel(xy=(0,0),value=70)
     delta = deltaDCT(audio, image)
     print(np.asarray(ideltaDCT(audio, delta)))
-    """
+    
     #flattedImage = createImgArrayToEmbed(image)
     #print("flatted image: ", flattedImage)
     #lenFlattedImage = len(flattedImage)
@@ -207,4 +210,4 @@ if __name__ == "__main__":
     print("watermarked coeffs: ", wCoeffs)
     watermark = imagnitudoDCT(audio, wCoeffs, ALPHA)
     print("extracted watermark: ", watermark)
-    """
+    
