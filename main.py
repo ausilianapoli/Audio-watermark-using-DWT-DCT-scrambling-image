@@ -7,6 +7,7 @@ import watermark_embedding_extraction as watermark
 AUDIO_PATH = "mono-piano.wav"
 T_AUDIO_PATH = 0
 T_SAMPLERATE = 1
+LEN_FRAMES = 1024
 
 #image
 IMAGE_PATH = "right.png"
@@ -17,7 +18,7 @@ WAVELET_TYPE = "haar"
 WAVELET_MODE = "symmetric"
 
 #scrambling
-TECHNIQUES = ["arnold", "lower", "upper"]
+SCRAMBLING_TECHNIQUES = ["arnold", "lower", "upper"]
 BINARY = 0
 GRAYSCALE = 1
 NO_ITERATIONS = 1
@@ -34,7 +35,7 @@ def getAudio(path):
         audioData = am.audioData(tupleAudio)
     return audioData, tupleAudio
 
-def getDWT(type, mode):
+def getDWT(audioData, type, mode):
     waveletsFamilies = am.getWaveletsFamilies()
     DWTFamilies = am.filterWaveletsFamilies(waveletsFamilies)
     waveletsModes = am.getWaveletsModes()
@@ -55,40 +56,48 @@ def getScrambling(path, type, mode = BINARY):
 
 def getStego(data, tupleAudio):
     nData = am.normalizeForWav(data)
-    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, "stego")        
-        
-if __name__ == "__main__":
+    am.saveWavFile(tupleAudio[T_AUDIO_PATH], tupleAudio[T_SAMPLERATE], nData, "stego-frame")     
     
+def embedding(scramblingMode, imageMode, embeddingMode, frames = 0):
     #1 load audio file
     audioData, tupleAudio = getAudio(AUDIO_PATH)
     
     #2 run DWT on audio file
-    DWTCoeffs = getDWT(WAVELET_TYPE, WAVELET_MODE)
+    DWTCoeffs = getDWT(audioData, WAVELET_TYPE, WAVELET_MODE)
     cA2, cD2, cD1 = DWTCoeffs
     
     #3 divide by frame
-    
+    if frames == 1:
+        cA2 = am.audioToFrame(cA2, LEN_FRAMES)
+        
     #4 run DCT on DWT coeffs   
     DCTCoeffs = am.DCT(cA2)
     
     #5 scrambling image watermark
-    payload = getScrambling(IMAGE_PATH, TECHNIQUES[0], GRAYSCALE)
+    payload = getScrambling(IMAGE_PATH, SCRAMBLING_TECHNIQUES[scramblingMode], imageMode)
     
     #6 embedd watermark image
-    wCoeffs = watermark.magnitudoDCT(DCTCoeffs, payload, ALPHA)
+    if embeddingMode == "magnitudo":
+        wCoeffs = watermark.magnitudoDCT(DCTCoeffs, payload, ALPHA)
     #print(wCoeffs)
     
     #7 run iDCT
     iWCoeffs = am.iDCT(wCoeffs)
     
     #8 join audio frames
+    if frames == 1:
+        iWCoeffs = am.frameToAudio(cA2)
     
     #9 run iDWT
-    DWTCoeffsoeffs = iWCoeffs, cD2, cD1
+    DWTCoeffs = iWCoeffs, cD2, cD1
     iWCoeffs = am.iDWT(DWTCoeffs, WAVELET_TYPE, WAVELET_MODE)
     
     #10 save new audio file
     getStego(iWCoeffs, tupleAudio)
+        
+if __name__ == "__main__":
+    
+    embedding(0, GRAYSCALE, "magnitudo")
     
     #print(type(dctCoeffs[0]))
     
