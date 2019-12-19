@@ -43,7 +43,7 @@ def setLastBit(number, bit):
         return ((number >> 1) << 1) | bit
     elif type(number) in (float, np.float64):
         binary = decToBinary(number)
-        binary = binary[:-1] + str(bit)
+        binary = binary[:12] + str(bit) + binary[13:]
         return binaryToDec(binary)
 
 def getLastBit(number):
@@ -51,7 +51,7 @@ def getLastBit(number):
         return int(number % 2)
     elif type(number) in (float, np.float64):
         binary = decToBinary(number)
-        return int(binary[-1:])
+        return int(binary[12])
 
 #Return a string containing the number written in binary notation with bits bit
 def decToBinary(number, bits=16):

@@ -13,7 +13,7 @@ OUTPUT_AUDIO_NAME = "stego-magnitudo01"
 
 #image
 IMAGE_PATH = "right.png"
-OUTPUT_IMG_NAME = "magnitudo01"
+OUTPUT_IMG_NAME = "magnitudo01-right"
 
 #DWT
 WAVELETS_LEVEL = 2
@@ -134,7 +134,7 @@ def extraction(wCoeffs, scramblingMode, embeddingMode, frames = 0):
     if embeddingMode == "magnitudo":
         payload = watermark.imagnitudoDCT(DCTCoeffs, wCoeffs, ALPHA)
     elif embeddingMode == "lsb":
-        payload = watermark.iLSB(DCTCoeffs)
+        payload = watermark.iLSB(wCoeffs)
     elif embeddingMode == "delta":
         payload = watermark.ideltaDCT(DCTCoeffs, wCoeffs)
     
@@ -146,17 +146,22 @@ def extraction(wCoeffs, scramblingMode, embeddingMode, frames = 0):
         
 if __name__ == "__main__":
     
-    wCoeffs = embedding(1, GRAYSCALE, "magnitudo")
-    #wCoeffs = embedding(0, BINARY, "lsb")
+    #wCoeffs = embedding(1, GRAYSCALE, "magnitudo")
+    wCoeffs = embedding(0, BINARY, "lsb")
+    
     #wCoeffs = embedding(0, GRAYSCALE, "delta")
+
+    #print(wCoeffs)
     
-    print(wCoeffs)
-    
-    extraction(wCoeffs, 1, "magnitudo")
+    #extraction(wCoeffs, 1, "magnitudo")
+    extraction(wCoeffs, 0, "lsb")
+    #extraction(wCoeffs, 1, "delta")
     
     """
     img = im.loadImage("right.png")
     bimg = im.binarization(img)
+    bimg.show()
+    
     abimg = im.arnoldTransform(bimg, 1)
     gimg = im.grayscale(img)
     agimg = im.arnoldTransform(gimg, 1)

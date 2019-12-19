@@ -65,6 +65,7 @@ def LSB(audio, image):
     image = isImgBinary(image)  
     joinAudio, numOfFrames = isJoinedAudio(audio)
     width, heigth = imgSize(image)
+  
     audioLen = len(joinAudio)
     
     if (width * heigth) + 32 >= audioLen:
@@ -127,11 +128,10 @@ def deltaDCT(coeffs, image):
         return joinCoeffs
 
 def ideltaDCT(coeffs, wCoeffs):
-    joinCoeffs, numOfFrames = isJoinedAudio(coeffs)
+    joinCoeffs, _ = isJoinedAudio(coeffs)
     joinWCoeffs, _ = isJoinedAudio(wCoeffs)
     
     width, heigth = sizeExtraction(joinWCoeffs)
-
     extracted = Image.new("L",(width,heigth))
     coeffsLen = len(coeffs)
 
@@ -140,7 +140,6 @@ def ideltaDCT(coeffs, wCoeffs):
         for j in range(heigth):
             x = i*heigth + j
             value = inormalize(abs(joinWCoeffs[x+32] - joinCoeffs[x+32]), 255)
-            #print(abs(joinWCoeffs[x+32] - joinCoeffs[x+32]))
             extracted.putpixel(xy=(i,j),value=value)
 
     return extracted
