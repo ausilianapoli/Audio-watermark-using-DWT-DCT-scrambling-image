@@ -146,13 +146,13 @@ def extraction(wCoeffs, scramblingMode, embeddingMode, frames = 0):
         
 if __name__ == "__main__":
     
-    wCoeffs = embedding(0, GRAYSCALE, "magnitudo")
+    wCoeffs = embedding(1, GRAYSCALE, "magnitudo")
     #wCoeffs = embedding(0, BINARY, "lsb")
     #wCoeffs = embedding(0, GRAYSCALE, "delta")
     
     print(wCoeffs)
     
-    extraction(wCoeffs, 0, "magnitudo")
+    extraction(wCoeffs, 1, "magnitudo")
     
     """
     img = im.loadImage("right.png")
