@@ -77,6 +77,7 @@ def joinAudioChannels(path):
     tupleMono = readWavFile(outPath)
     return tupleMono
 
+#Return array of data audio
 def audioData(audio):
     return audio[AUDIO_DATA]
 

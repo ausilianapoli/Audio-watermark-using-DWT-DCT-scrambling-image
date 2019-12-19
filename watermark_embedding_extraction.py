@@ -47,7 +47,7 @@ def sizeExtraction(audio):
     return width, height
 
 #Check if audio is divided in frames:
-    # if true, it joins audio and then the reverse will be called
+    # if true, it joins audio and then the inverse will be called
     # if false, it does nothing
 def isJoinedAudio(audio):
     if type(audio[0]) in (np.int16, np.float64, int, float):

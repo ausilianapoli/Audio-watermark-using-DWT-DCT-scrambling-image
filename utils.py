@@ -28,6 +28,7 @@ def coprime(m, mode="first"):
 
     return 1
 
+#Routine to create the pathname for file before saving
 def makeFileName(prefix, path):
     fileName = os.path.basename(path)
     dirName = os.path.dirname(path)
