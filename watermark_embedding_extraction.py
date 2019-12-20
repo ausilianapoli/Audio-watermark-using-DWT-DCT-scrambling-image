@@ -1,6 +1,6 @@
 from utils import setLastBit, getLastBit, decToBinary, binaryToDec, normalize, inormalize
 from PIL import Image
-from audio_managing import frameToAudio
+from audio_managing import frameToAudio, audioToFrame
 from image_managing import binarization, grayscale, imgSize
 import numpy as np
 import math
@@ -58,8 +58,8 @@ def isJoinedAudio(audio):
         joinAudio = frameToAudio(audio)
     return joinAudio, numOfFrames
 
-def iisJoinedAudio(audio):
-    return audioToFrame(joinAudio, numOfFrames)
+def iisJoinedAudio(audio, numOfFrames):
+    return audioToFrame(audio, numOfFrames)
 
 def LSB(audio, image):   
     image = isImgBinary(image)  
@@ -158,7 +158,8 @@ def magnitudoDCT(coeffs, watermark, alpha):
     for i in range(len(watermark), len(coeffs)):
         wCoeffs.append(coeffs[i])
     if joinFlag != -1:
-        wCoeffs = iisJoinedAudio(wCoeffs)
+        wCoeffs = np.asarray(wCoeffs)
+        wCoeffs = iisJoinedAudio(wCoeffs, joinFlag)
     return wCoeffs
 
 #The extraction of watermark from k coefficents of greater magnitudo       
