@@ -3,6 +3,8 @@ import math
 import numpy as np
 import bitstring
 import sys
+from PIL import Image
+import image_managing as im
 
 #Return inverse module m of a
 def imodule(a, m):
@@ -96,3 +98,19 @@ def inormalize(number, range):
 #Process the Image data for metrics
 def ImageToFlattedArray(image):
     return np.ravel(np.asarray(image))
+
+#Procedure to have two images of same size
+def fixSizeImg(img, toFixImg, imgMode):
+    mode = ("L" if imgMode == 1 else "1")
+    width, heigth = im.imgSize(img)
+    fWidth, fHeigth = im.imgSize(toFixImg)
+    nImage = Image.new(mode, (width, heigth))
+    for i in range(width):
+        if i >= fWidth: break
+        for j in range(heigth):
+            if j >= fHeigth: break
+            value = toFixImg.getpixel(xy=(i,j))
+            nImage.putpixel(xy=(i,j),value=value)
+    return nImage
+
+    

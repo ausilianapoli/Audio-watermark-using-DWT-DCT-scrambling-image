@@ -2,7 +2,8 @@ import numpy as np
 import image_managing as im
 import audio_managing as am
 import watermark_embedding_extraction as watermark
-from utils import makeFileName
+from utils import makeFileName, ImageToFlattedArray, fixSizeImg
+import metrics as m
 
 #audio
 T_AUDIO_PATH = 0
@@ -22,7 +23,7 @@ NO_ITERATIONS = 1
 TRIANGULAR_PARAMETERS = [5, 3, 1] #c,a,d
 
 #embedding
-ALPHA = 0.1
+ALPHA = 0.01
 
 def getAudio(path):
     tupleAudio = am.readWavFile(path)
@@ -158,18 +159,37 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
     
     #7 save image
     getPayload(payload, outputImagePath)
+    
+def compareWatermark(wOriginal, wExtracted, imgMode):
+    wOriginal = im.loadImage(wOriginal)
+    if imgMode == "GRAYSCALE":
+        wOriginal = im.grayscale(wOriginal)
+    else:
+        wOriginal = im.binarization(wOriginal)
+    wExtracted = im.loadImage(wExtracted)
+    #print(im.imgSize(wOriginal), im.imgSize(wExtracted))
+    if(im.imgSize(wOriginal) != im.imgSize(wExtracted)):
+        wExtracted = fixSizeImg(wOriginal, wExtracted, imgMode)
+    wOriginal = ImageToFlattedArray(wOriginal)
+    wExtracted = ImageToFlattedArray(wExtracted)
+    #print(len(wOriginal), len(wExtracted))
+    p = m.correlationIndex(wOriginal, wExtracted)
+    return m.binaryDetection(p, 0.7)
         
 if __name__ == "__main__":
     
-    wCoeffs = embedding("mono-piano.wav", "07.jpg", "stego-07-magnitudo01", 2, GRAYSCALE, "magnitudo", 1)
+    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo001", 2, GRAYSCALE, "magnitudo", 1)
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-lsb", 0, BINARY, "lsb")
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-delta", 0, GRAYSCALE, "delta")
 
     #print(wCoeffs)
     
-    extraction(wCoeffs, "mono-piano.wav", "magnitudo01-07.jpg", 2, "magnitudo", 1)
+    extraction(wCoeffs, "mono-piano.wav", "magnitudo001-right.png", 2, "magnitudo", 1)
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
     #extraction("stego-delta-mono-piano.wav", "mono-piano.wav", "delta-right.png", 0, "delta")
+    
+    result = compareWatermark("right.png", "magnitudo001-right.png", GRAYSCALE)
+    print("The extracted watermark is correlated to that original? ", result)
     
     """
     img = im.loadImage("right.png")
