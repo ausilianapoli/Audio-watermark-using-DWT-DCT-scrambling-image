@@ -5,15 +5,9 @@ import watermark_embedding_extraction as watermark
 from utils import makeFileName
 
 #audio
-AUDIO_PATH = "mono-piano.wav"
 T_AUDIO_PATH = 0
 T_SAMPLERATE = 1
 LEN_FRAMES = 1024
-OUTPUT_AUDIO_NAME = "stego-magnitudo01"
-
-#image
-IMAGE_PATH = "right.png"
-OUTPUT_IMG_NAME = "magnitudo01-right"
 
 #DWT
 WAVELETS_LEVEL = 2
@@ -28,7 +22,7 @@ NO_ITERATIONS = 1
 TRIANGULAR_PARAMETERS = [5, 3, 1] #c,a,d
 
 #embedding
-ALPHA = 0.1
+ALPHA = 0.005
 
 def getAudio(path):
     tupleAudio = am.readWavFile(path)
@@ -86,7 +80,8 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
         
     #4 run DCT on DWT coeffs   
     DCTCoeffs = am.DCT(cA2)
-    print(DCTCoeffs)
+    #print(DCTCoeffs)
+    
     #5 scrambling image watermark
     payload = getScrambling(imagePath, SCRAMBLING_TECHNIQUES[scramblingMode], imageMode)
     
@@ -119,14 +114,14 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
 def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode, frames = 0):
     #1 load audio file
     audioData, tupleAudio = getAudio(audio)
-    stegoAudioData, stegoTupleAudio = getAudio(stegoAudio)
+    #stegoAudioData, stegoTupleAudio = getAudio(stegoAudio)
     
     #2 run DWT on audio file
     DWTCoeffs = getDWT(audioData, WAVELET_TYPE, WAVELET_MODE)
     cA2, cD2, cD1 = DWTCoeffs
 
-    stegoDWTCoeffs = getDWT(stegoAudioData, WAVELET_TYPE, WAVELET_MODE)
-    stegocA2, stegocD2, stegocD1 = stegoDWTCoeffs
+    #stegoDWTCoeffs = getDWT(stegoAudioData, WAVELET_TYPE, WAVELET_MODE)
+    #stegocA2, stegocD2, stegocD1 = stegoDWTCoeffs
     
     #3 divide by frame
     if frames == 1:
@@ -134,15 +129,15 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
         
     #4 run DCT on DWT coeffs   
     DCTCoeffs = am.DCT(cA2)
-    stegoDCTCoeffs = am.DCT(stegocA2)
+    #stegoDCTCoeffs = am.DCT(stegocA2)
     
     #5 extract image watermark
     if embeddingMode == "magnitudo":
-        payload = watermark.imagnitudoDCT(DCTCoeffs, stegoDCTCoeffs, ALPHA)
+        payload = watermark.imagnitudoDCT(DCTCoeffs, stegoAudio, ALPHA)
     elif embeddingMode == "lsb":
-        payload = watermark.iLSB(stegoDCTCoeffs)
+        payload = watermark.iLSB(stegoAudio)
     elif embeddingMode == "delta":
-        payload = watermark.ideltaDCT(DCTCoeffs, stegoDCTCoeffs)
+        payload = watermark.ideltaDCT(DCTCoeffs, stegoAudio)
     
     #6 inverse scrambling of payload
     payload = getiScrambling(payload, SCRAMBLING_TECHNIQUES[scramblingMode])
@@ -152,16 +147,15 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
         
 if __name__ == "__main__":
     
-    #wCoeffs = embedding(1, GRAYSCALE, "magnitudo")
-    #wCoeffs = embedding(AUDIO_PATH, IMAGE_PATH, "stego-lsb", 0, BINARY, "lsb")
-    
-    wCoeffs = embedding(AUDIO_PATH, IMAGE_PATH, "stego-delta", 0, GRAYSCALE, "delta")
+    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo0005", 1, GRAYSCALE, "magnitudo")
+    #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-lsb", 0, BINARY, "lsb")
+    #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-delta", 0, GRAYSCALE, "delta")
 
     #print(wCoeffs)
     
-    #extraction(wCoeffs, 1, "magnitudo")
+    extraction(wCoeffs, "mono-piano.wav", "magnitudo0005-right.png", 0, "magnitudo")
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
-    extraction("stego-delta-mono-piano.wav", "mono-piano.wav", "delta-right.png", 0, "delta")
+    #extraction("stego-delta-mono-piano.wav", "mono-piano.wav", "delta-right.png", 0, "delta")
     
     """
     img = im.loadImage("right.png")
