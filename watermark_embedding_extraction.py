@@ -175,16 +175,19 @@ def imagnitudoDCT(coeffs, wCoeffs, alpha):
         #watermark.append(math.ceil(wCoeffs[i] - coeffs[i]))
     return convertToPIL(createImgMatrix(extractImage(watermark)))
 
+#Extract image coefficients from global watermark array
 def extractImage(watermark):
     nPixel = (watermark[0]*watermark[1])+2
     return watermark[:nPixel]
 
+#The image becomes matrix from array
 def createImgMatrix(image):
     width = image[0]
     heigth = image[1]
     matrixImg = np.reshape(image[2:], (width, heigth))
     return matrixImg
 
+#Convert numpy type to Image type
 def convertToPIL(image):
     PImage = Image.fromarray((image).astype("uint8"), mode="L")
     return PImage
