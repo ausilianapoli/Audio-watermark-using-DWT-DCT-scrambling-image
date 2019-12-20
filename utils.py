@@ -92,3 +92,7 @@ def normalize(number, range):
 
 def inormalize(number, range):
     return int(number*255)
+
+#Process the Image data for metrics
+def ImageToFlattedArray(image):
+    return np.ravel(np.asarray(image))
