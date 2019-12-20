@@ -183,7 +183,7 @@ def createImgMatrix(image):
     return matrixImg
 
 def convertToPIL(image):
-    PImage = Image.fromarray(image)
+    PImage = Image.fromarray((image*255).astype("uint8"), mode="L")
     return PImage
 
 #Routine procedure to embedd the shape of image into flatted array of it
