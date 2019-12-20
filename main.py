@@ -74,12 +74,18 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
     DWTCoeffs = getDWT(audioData, WAVELET_TYPE, WAVELET_MODE)
     cA2, cD2, cD1 = DWTCoeffs
     
-    #3 divide by frame
+    #3 divide by frame & #4 run DCT on DWT coeffs
     if frames == 1:
         cA2 = am.audioToFrame(cA2, LEN_FRAMES)
-        
+        print(len(cA2[cA2.shape[0]-1]))
+        DCTCoeffs = np.zeros(cA2.shape)
+        print(DCTCoeffs)
+        for i in range(cA2.shape[0]):
+            DCTCoeffs[i] = am.DCT(cA2[i])
     #4 run DCT on DWT coeffs   
-    DCTCoeffs = am.DCT(cA2)
+    else:
+        DCTCoeffs = am.DCT(cA2)
+    
     #print(DCTCoeffs)
     
     #5 scrambling image watermark
@@ -95,13 +101,16 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
         print(wCoeffs)
     #print(wCoeffs)
     
-    #7 run iDCT
-    iWCoeffs = am.iDCT(wCoeffs)
-    
-    #8 join audio frames
+    #7 run iDCT and #8 join audio frames
     if frames == 1:
+        iWCoeffs = np.zeros(wCoeffs.shape)
+        for i in range(wCoeffs.shape[0]):
+            iWCoeffs[i] = am.iDCT(wCoeffs[i])
         iWCoeffs = am.frameToAudio(cA2)
-    
+    #7 run iDCT
+    else:
+        iWCoeffs = am.iDCT(wCoeffs)
+        
     #9 run iDWT
     DWTCoeffs = iWCoeffs, cD2, cD1
     iWCoeffs = am.iDWT(DWTCoeffs, WAVELET_TYPE, WAVELET_MODE)
@@ -123,13 +132,16 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
     #stegoDWTCoeffs = getDWT(stegoAudioData, WAVELET_TYPE, WAVELET_MODE)
     #stegocA2, stegocD2, stegocD1 = stegoDWTCoeffs
     
-    #3 divide by frame
+    #3 divide by frame & #4 run DCT on DWT coeffs
     if frames == 1:
         cA2 = am.audioToFrame(cA2, LEN_FRAMES)
-        
+        DCTCoeffs = np.zeros(cA2.shape)
+        for i in range(cA2.shape[0]):
+            DCTCoeffs[i] = am.DCT(cA2[i])
     #4 run DCT on DWT coeffs   
-    DCTCoeffs = am.DCT(cA2)
-    #stegoDCTCoeffs = am.DCT(stegocA2)
+    else:
+        DCTCoeffs = am.DCT(cA2)
+        #stegoDCTCoeffs = am.DCT(stegocA2)
     
     #5 extract image watermark
     if embeddingMode == "magnitudo":

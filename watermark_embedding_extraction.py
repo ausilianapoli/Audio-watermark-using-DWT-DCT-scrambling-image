@@ -167,8 +167,9 @@ def imagnitudoDCT(coeffs, wCoeffs, alpha):
     wCoeffs, joinWCoeffsFlag = isJoinedAudio(wCoeffs)
     #coeffs = coeffs[:len(wCoeffs)]
     watermark = []
+    #print(wCoeffs)
     for i in range(len(wCoeffs)):
-        watermark.append(math.floor((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha)))
+        watermark.append(math.floor(abs((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha))))
         #watermark.append(math.ceil(wCoeffs[i] - coeffs[i]))
     return convertToPIL(createImgMatrix(extractImage(watermark)))
 
