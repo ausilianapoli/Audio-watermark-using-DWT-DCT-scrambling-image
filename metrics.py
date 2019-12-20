@@ -1,9 +1,11 @@
 import scipy.stats as stats
 
+#Pearson index to "view" the correlation between two watermarks
 def correlationIndex(wOriginal, wExtracted):
     p = stats.pearsonr(wOriginal, wExtracted)
     return p
 
+#Binary Detection of corretc watermark based on threshold
 def binaryDetection(index, threshold):
     return (True if abs(index[0]) > threshold else False)
 
