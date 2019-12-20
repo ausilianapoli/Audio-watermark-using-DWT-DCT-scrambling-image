@@ -1,4 +1,6 @@
 import scipy.stats as stats
+import numpy as np
+import math
 
 #Pearson index to "view" the correlation between two watermarks
 def correlationIndex(wOriginal, wExtracted):
@@ -8,6 +10,12 @@ def correlationIndex(wOriginal, wExtracted):
 #Binary Detection of corretc watermark based on threshold
 def binaryDetection(index, threshold):
     return (True if abs(index[0]) > threshold else False)
+
+#PSNR
+def PSNR(wOriginal, wExtracted):
+    mse = np.mean((wOriginal - wExtracted)**2)
+    psnr = 10 * math.log10((255.0**2)/mse)
+    return psnr
 
 '''
 TESTING
