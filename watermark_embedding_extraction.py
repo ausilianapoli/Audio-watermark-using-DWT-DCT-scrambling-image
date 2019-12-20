@@ -65,7 +65,7 @@ def LSB(audio, image):
     image = isImgBinary(image)  
     joinAudio, numOfFrames = isJoinedAudio(audio)
     width, heigth = imgSize(image)
-  
+
     audioLen = len(joinAudio)
     
     if (width * heigth) + 32 >= audioLen:
