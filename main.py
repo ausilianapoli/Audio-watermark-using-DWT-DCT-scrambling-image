@@ -22,7 +22,7 @@ NO_ITERATIONS = 1
 TRIANGULAR_PARAMETERS = [5, 3, 1] #c,a,d
 
 #embedding
-ALPHA = 0.005
+ALPHA = 0.1
 
 def getAudio(path):
     tupleAudio = am.readWavFile(path)
@@ -147,13 +147,13 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
         
 if __name__ == "__main__":
     
-    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo0005", 1, GRAYSCALE, "magnitudo")
+    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo01", 1, GRAYSCALE, "magnitudo")
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-lsb", 0, BINARY, "lsb")
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-delta", 0, GRAYSCALE, "delta")
 
     #print(wCoeffs)
     
-    extraction(wCoeffs, "mono-piano.wav", "magnitudo0005-right.png", 1, "magnitudo")
+    extraction(wCoeffs, "mono-piano.wav", "magnitudo01-right.png", 1, "magnitudo")
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
     #extraction("stego-delta-mono-piano.wav", "mono-piano.wav", "delta-right.png", 0, "delta")
     
