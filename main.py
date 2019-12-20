@@ -136,6 +136,10 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
         DCTCoeffs = np.copy(cA2)
         for i in range(cA2.shape[0]):
             DCTCoeffs[i] = am.DCT(cA2[i])
+        #stegocA2 = am.audioToFrame(stegocA2, LEN_FRAMES)
+        #stegoDCTCoeffs = np.copy(stegocA2)
+        #for i in range(stegocA2.shape[0]):
+            #stegoDCTCoeffs[i] = am.DCT(stegocA2)
     #4 run DCT on DWT coeffs   
     else:
         DCTCoeffs = am.DCT(cA2)
