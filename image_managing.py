@@ -4,13 +4,13 @@ from matplotlib import pyplot as plt
 import numpy as np
 import math
 from utils import imodule, coprime
+import sys
 #from watermark_embedding_extraction import LSB
 
 #Return numpy array from a Image file
 def loadImage(path=""):
     if path is "":
-        print("LOAD IMAGE: Path must not be None!")
-        return 
+        sys.exit("LOAD IMAGE: Path must not be None!")
 
     img = Image.open(path)
     return img
@@ -21,15 +21,13 @@ def showImage(img):
         img.show()
     else:
         if img is "":
-            print("SHOW IMAGE: Path must not be None!")
-            return 
+            sys.exit("SHOW IMAGE: Path must not be None!")
         Image.open(img).show()
 
 #Save image from array or Image file
 def saveImage(img, path):
     if path is "":
-        print("SHOW IMAGE: Path must not be None!")
-        return 
+        sys.exit("SHOW IMAGE: Path must not be None!")
     img.save(path)
 
 def grayscale(img):
@@ -51,8 +49,7 @@ def imgSize(img):
 def arnoldTransform(img, iteration):
     width, heigth = imgSize(img)
     if width != heigth:
-        print("ARNOLD TRANSFORM: Image must be square!")
-        return
+        sys.exit("ARNOLD TRANSFORM: Image must be square!")
     side = width
     toTransform = img.copy()
     transformed = img.copy()
@@ -74,8 +71,7 @@ def arnoldTransform(img, iteration):
 def iarnoldTransform(img, iteration):
     width, heigth = imgSize(img)
     if width != heigth:
-        print("IARNOLD TRANSFORM: Image must be square!")
-        return
+        sys.exit("IARNOLD TRANSFORM: Image must be square!")
     side = width
     transformed = img.copy()
     toTransform = img.copy()
@@ -195,8 +191,7 @@ def mappingTransform(mode, img, iteration, c, a=-1, d=-1):
         m = upperTriangularMappingTransform(img,iteration,c,a,d)
         return m
     else:
-        print("MAPPING TRANSFORM: Mode must be lower or upper!")
-        return
+        sys.exit("MAPPING TRANSFORM: Mode must be lower or upper!")
 
 def imappingTransform(mode, img, iteration, c, a=-1, d=-1):
     if mode is "lower":
@@ -206,8 +201,7 @@ def imappingTransform(mode, img, iteration, c, a=-1, d=-1):
         m = iupperTriangularMappingTransform(img,iteration,c,a,d)
         return m
     else:
-        print("MAPPING TRANSFORM: Mode must be lower or upper!")
-        return
+        sys.exit("MAPPING TRANSFORM: Mode must be lower or upper!")
 
 '''
 TESTING

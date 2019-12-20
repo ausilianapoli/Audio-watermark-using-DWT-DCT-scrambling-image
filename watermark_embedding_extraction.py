@@ -4,6 +4,7 @@ from audio_managing import frameToAudio, audioToFrame
 from image_managing import binarization, grayscale, imgSize
 import numpy as np
 import math
+import sys
 
 ALPHA = 0.1
 
@@ -69,8 +70,7 @@ def LSB(audio, image):
     audioLen = len(joinAudio)
     
     if (width * heigth) + 32 >= audioLen:
-        print("LEAST SIGNIFICANT BIT: Cover dimension is not sufficient for this payload size!")
-        return
+        sys.exit("LEAST SIGNIFICANT BIT: Cover dimension is not sufficient for this payload size!")
 
     joinAudio = sizeEmbedding(joinAudio, width, heigth)
 
@@ -110,8 +110,7 @@ def deltaDCT(coeffs, image):
     coeffsLen = len(joinCoeffs)
     width, heigth = imgSize(image)
     if (width * heigth) + 32 >= coeffsLen:
-        print("DELTA DCT: Cover dimension is not sufficient for this payload size!")
-        return
+        sys.exit("DELTA DCT: Cover dimension is not sufficient for this payload size!")
 
     joinCoeffs = sizeEmbedding(joinCoeffs, width, heigth)
 
@@ -151,6 +150,8 @@ def magnitudoDCT(coeffs, watermark, alpha):
     watermark = createImgArrayToEmbed(watermark)
     #print(watermark)
     coeffs, joinFlag = isJoinedAudio(coeffs)
+    if(coeffs.shape[0] < len(watermark)):
+        sys.exit("MAGNITUDO DCT: Cover dimension is not sufficient for this payload size!")
     #coeffs = coeffs[:len(watermark)] #to delete for main.py
     wCoeffs = []
     for i in range(len(watermark)):

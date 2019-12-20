@@ -2,6 +2,7 @@ import os
 import math
 import numpy as np
 import bitstring
+import sys
 
 #Return inverse module m of a
 def imodule(a, m):
@@ -14,8 +15,7 @@ def imodule(a, m):
 #Return first or second number coprime with m
 def coprime(m, mode="first"):
     if mode is not "first" and mode is not "second":
-        print("COPRIME: Mode must be first or second!")
-        return
+        sys.exit("COPRIME: Mode must be first or second!")
 
     found = 0
     for x in range(2,m):
@@ -57,8 +57,7 @@ def getLastBit(number):
 def decToBinary(number, bits=16):
     if type(number) in (int, np.int16):
         if number > 2**bits:
-            print("DEC TO BINARY: Insufficient number of bit!")
-            return
+            sys.exit("DEC TO BINARY: Insufficient number of bit!")
 
         binary = ""
         for i in range(bits):

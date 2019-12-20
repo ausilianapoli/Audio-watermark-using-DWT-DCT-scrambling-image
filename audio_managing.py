@@ -8,6 +8,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import pywt
+import sys
 
 AUDIO_PATH = 0
 SAMPLERATE = 1
@@ -35,8 +36,7 @@ DWT_SET = set({"haar",
 #Read the file audio.wav from path
 def readWavFile(path = ""):
     if path == "":
-        print("READ WAV FILE must have valid path!")
-        return 1
+        sys.exit("READ WAV FILE must have valid path!")
     samplerate, data = wavfile.read(path)
     tupleWav = (path, samplerate, data)
     return tupleWav
