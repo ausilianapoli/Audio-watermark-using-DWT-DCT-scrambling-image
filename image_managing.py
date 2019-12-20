@@ -30,7 +30,6 @@ def saveImage(img, path):
     if path is "":
         print("SHOW IMAGE: Path must not be None!")
         return 
-    
     img.save(path)
 
 def grayscale(img):
@@ -217,7 +216,7 @@ if __name__ == "__main__":
     img = loadImage("right.png")
     imgr = loadImage("07.jpg")
     imgr = binarization(imgr)
-
+    
     """
     t = arnoldTransform(img,iteration=1)
     showImage(t)
