@@ -23,7 +23,7 @@ NO_ITERATIONS = 1
 TRIANGULAR_PARAMETERS = [5, 3, 1] #c,a,d
 
 #embedding
-ALPHA = 0.01
+ALPHA = 0.1
 
 def getAudio(path):
     tupleAudio = am.readWavFile(path)
