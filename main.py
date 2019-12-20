@@ -174,22 +174,24 @@ def compareWatermark(wOriginal, wExtracted, imgMode):
     wExtracted = ImageToFlattedArray(wExtracted)
     #print(len(wOriginal), len(wExtracted))
     p = m.correlationIndex(wOriginal, wExtracted)
-    return m.binaryDetection(p, 0.7)
+    psnr = m.PSNR(wOriginal, wExtracted)
+    return m.binaryDetection(p, 0.7), psnr
         
 if __name__ == "__main__":
     
-    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo001", 2, GRAYSCALE, "magnitudo", 1)
+    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo01", 2, GRAYSCALE, "magnitudo", 1)
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-lsb", 0, BINARY, "lsb")
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-delta", 0, GRAYSCALE, "delta")
 
     #print(wCoeffs)
     
-    extraction(wCoeffs, "mono-piano.wav", "magnitudo001-right.png", 2, "magnitudo", 1)
+    extraction(wCoeffs, "mono-piano.wav", "magnitudo01-right.png", 2, "magnitudo", 1)
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
     #extraction("stego-delta-mono-piano.wav", "mono-piano.wav", "delta-right.png", 0, "delta")
     
-    result = compareWatermark("right.png", "magnitudo001-right.png", GRAYSCALE)
-    print("The extracted watermark is correlated to that original? ", result)
+    result = compareWatermark("right.png", "magnitudo01-right.png", GRAYSCALE)
+    print("The extracted watermark is correlated to that original? ", result[0])
+    print("The PSNR between the two watermarks is: ", result[1])
     
     """
     img = im.loadImage("right.png")
