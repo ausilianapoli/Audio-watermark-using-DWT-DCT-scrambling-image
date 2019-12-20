@@ -22,7 +22,7 @@ NO_ITERATIONS = 1
 TRIANGULAR_PARAMETERS = [5, 3, 1] #c,a,d
 
 #embedding
-ALPHA = 0.1
+ALPHA = 0.01
 
 def getAudio(path):
     tupleAudio = am.readWavFile(path)
@@ -77,9 +77,8 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
     #3 divide by frame & #4 run DCT on DWT coeffs
     if frames == 1:
         cA2 = am.audioToFrame(cA2, LEN_FRAMES)
-        print(len(cA2[cA2.shape[0]-1]))
-        DCTCoeffs = np.zeros(cA2.shape)
-        print(DCTCoeffs)
+        DCTCoeffs = np.copy(cA2)
+        #print(cA2[0][0])
         for i in range(cA2.shape[0]):
             DCTCoeffs[i] = am.DCT(cA2[i])
     #4 run DCT on DWT coeffs   
@@ -99,11 +98,10 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
     elif embeddingMode == "delta":
         wCoeffs = watermark.deltaDCT(DCTCoeffs, payload)
         print(wCoeffs)
-    #print(wCoeffs)
     
     #7 run iDCT and #8 join audio frames
     if frames == 1:
-        iWCoeffs = np.zeros(wCoeffs.shape)
+        iWCoeffs = np.copy(wCoeffs)
         for i in range(wCoeffs.shape[0]):
             iWCoeffs[i] = am.iDCT(wCoeffs[i])
         iWCoeffs = am.frameToAudio(cA2)
@@ -135,7 +133,7 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
     #3 divide by frame & #4 run DCT on DWT coeffs
     if frames == 1:
         cA2 = am.audioToFrame(cA2, LEN_FRAMES)
-        DCTCoeffs = np.zeros(cA2.shape)
+        DCTCoeffs = np.copy(cA2)
         for i in range(cA2.shape[0]):
             DCTCoeffs[i] = am.DCT(cA2[i])
     #4 run DCT on DWT coeffs   
@@ -159,13 +157,13 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
         
 if __name__ == "__main__":
     
-    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo01", 1, GRAYSCALE, "magnitudo")
+    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo001", 1, GRAYSCALE, "magnitudo", 1)
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-lsb", 0, BINARY, "lsb")
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-delta", 0, GRAYSCALE, "delta")
 
     #print(wCoeffs)
     
-    extraction(wCoeffs, "mono-piano.wav", "magnitudo01-right.png", 1, "magnitudo")
+    extraction(wCoeffs, "mono-piano.wav", "magnitudo001-right.png", 1, "magnitudo", 1)
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
     #extraction("stego-delta-mono-piano.wav", "mono-piano.wav", "delta-right.png", 0, "delta")
     
