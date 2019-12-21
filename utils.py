@@ -40,20 +40,42 @@ def makeFileName(prefix, path):
     nPath = os.path.join(dirName, fileName)
     return nPath
 
+def splitFloat(number):
+    if type(number) not in (float, np.float64):
+        print("SPLIT FLOAT: number must be float!")
+        return
+
+    whole = int(number)
+    dec = number - whole
+    return whole, dec
+
+def joinFloat(whole, dec):
+    return whole + dec
+
 def setLastBit(number, bit):
-    if type(number) in (int, np.int16):
+    if type(number) in (int, np.int16, np.int64):
         return ((number >> 1) << 1) | bit
     elif type(number) in (float, np.float64):
+        whole, dec = splitFloat(number)
+        number = setLastBit(whole, bit)
+        return joinFloat(number, dec)
+        """
         binary = decToBinary(number)
         binary = binary[:23] + str(bit) + binary[24:]
         return binaryToDec(binary)
+        """
 
 def getLastBit(number):
-    if type(number) in (int, np.int16):
+    if type(number) in (int, np.int16, np.int64):
         return int(number % 2)
     elif type(number) in (float, np.float64):
+        whole, dec = splitFloat(number)
+        return getLastBit(whole)
+
+        """
         binary = decToBinary(number)
         return int(binary[23])
+        """
 
 #Return a string containing the number written in binary notation with bits bit
 def decToBinary(number, bits=16):
@@ -113,4 +135,38 @@ def fixSizeImg(img, toFixImg, imgMode):
             nImage.putpixel(xy=(i,j),value=value)
     return nImage
 
+def setBit(coeff, bit, i, j):
+    """
+    if coeff[i] > coeff[j]:
+        if bit == 0:
+           coeff = swap(coeff, i, j)
+    else:
+        if bit == 1:
+            coeff = swap(coeff, i, j)
+    return coeff
+    """
+    if bit == 255:
+        coeff[i] = 10
+    else:
+        coeff[i] = -10
+    return coeff
     
+def getBit(coeff, i, j):
+    """
+    if coeff[i] > coeff[j]:
+        return 255
+    else:
+        return 0
+    """
+    if coeff[i] > 0:
+        return 255
+    else: 
+        return 0
+    
+def swap(coeff, i, j):
+    swapped = coeff.copy()
+    tmp = swapped[i]
+    swapped[i] = swapped[j]
+    swapped[j] = tmp
+
+    return swapped
