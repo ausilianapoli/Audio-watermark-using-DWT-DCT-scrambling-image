@@ -11,11 +11,18 @@ def correlationIndex(wOriginal, wExtracted):
 def binaryDetection(index, threshold):
     return (True if abs(index[0]) > threshold else False)
 
-#PSNR
+#PSNR for watermark images
 def PSNR(wOriginal, wExtracted):
     mse = np.mean((wOriginal - wExtracted)**2)
     psnr = 10 * math.log10((255.0**2)/mse)
     return psnr
+
+#SNR for audio files
+def SNR(data):
+    mean = np.mean(data)
+    std = np.std(data)
+    return mean/std
+    
 
 '''
 TESTING

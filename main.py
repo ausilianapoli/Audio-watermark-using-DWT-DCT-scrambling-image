@@ -181,6 +181,13 @@ def compareWatermark(wOriginal, wExtracted, imgMode):
     p = m.correlationIndex(wOriginal, wExtracted)
     psnr = m.PSNR(wOriginal, wExtracted)
     return m.binaryDetection(p, 0.7), psnr
+
+def compareAudio(audio, stegoAudio):
+    audio = am.audioData(am.readWavFile(audio))
+    stegoAudio = am.audioData(am.readWavFile(stegoAudio))
+    snr = m.SNR(audio)
+    snrStego = m.SNR(stegoAudio)
+    return snr, snrStego
         
 if __name__ == "__main__":
     
@@ -190,14 +197,16 @@ if __name__ == "__main__":
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-grayscale-delta", 0, GRAYSCALE, "delta",1)
     #print(wCoeffs)
     
-    extraction("stego-magnitudo001-mono-piano.wav", "mono-piano.wav", "magnitudo001-right.png", 2, "magnitudo", 1)
+    #extraction("stego-magnitudo001-mono-piano.wav", "mono-piano.wav", "magnitudo001-right.png", 2, "magnitudo", 1)
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
     #extraction("stego-binary-delta-mono-piano.wav", "mono-piano.wav", "delta-binary-right.png", 0, "delta",1)
     #extraction("stego-grayscale-delta-mono-piano.wav", "mono-piano.wav", "delta-grayscale-right.png", 0, "delta",1)
     
-    result = compareWatermark("right.png", "magnitudo001-right.png", GRAYSCALE)
+    result = compareWatermark("right.png", "delta-grayscale-right.png", GRAYSCALE)
     print("The extracted watermark is correlated to that original? ", result[0])
     print("The PSNR between the two watermarks is: ", result[1])
+    snr = compareAudio("mono-piano.wav", "stego-grayscale-delta-mono-piano.wav")
+    print("SNR of {} is: {}\nSNR of {} is: {}".format("mono-piano.wav", snr[0], "stego-grayscale-delta-mono-piano.wav", snr[1]))
     
     """
     img = im.loadImage("right.png")
