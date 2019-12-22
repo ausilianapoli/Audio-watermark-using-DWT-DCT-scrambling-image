@@ -42,7 +42,7 @@ def makeFileName(prefix, path):
 
 def splitFloat(number):
     if type(number) not in (float, np.float64):
-        print("SPLIT FLOAT: number must be float!")
+        sys.exit("SPLIT FLOAT: number must be float!")
         return
 
     whole = int(number)
