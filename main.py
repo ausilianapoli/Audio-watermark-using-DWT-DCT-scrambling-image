@@ -150,7 +150,7 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
 
     #5 extract image watermark
     if embeddingMode == "magnitudo":
-        payload = watermark.imagnitudoDCT(DCTCoeffs, stegoAudio, ALPHA)
+        payload = watermark.imagnitudoDCT(DCTCoeffs, stegoDCTCoeffs, ALPHA)
     elif embeddingMode == "lsb":
         payload = watermark.iLSB(stegoDCTCoeffs)
     elif embeddingMode == "delta":
@@ -181,16 +181,16 @@ def compareWatermark(wOriginal, wExtracted, imgMode):
         
 if __name__ == "__main__":
     
-    #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo01", 2, GRAYSCALE, "magnitudo", 1)
+    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo01", 2, GRAYSCALE, "magnitudo")
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-lsb", 0, BINARY, "lsb")
-    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-binary-delta", 0, BINARY, "delta",1)
-    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-grayscale-delta", 0, GRAYSCALE, "delta",1)
+    #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-binary-delta", 0, BINARY, "delta",1)
+    #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-grayscale-delta", 0, GRAYSCALE, "delta",1)
     #print(wCoeffs)
     
-    #extraction(wCoeffs, "mono-piano.wav", "magnitudo01-right.png", 2, "magnitudo", 1)
+    extraction("stego-magnitudo01-mono-piano.wav", "mono-piano.wav", "magnitudo01-right.png", 2, "magnitudo")
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
-    extraction("stego-binary-delta-mono-piano.wav", "mono-piano.wav", "delta-binary-right.png", 0, "delta",1)
-    extraction("stego-grayscale-delta-mono-piano.wav", "mono-piano.wav", "delta-grayscale-right.png", 0, "delta",1)
+    #extraction("stego-binary-delta-mono-piano.wav", "mono-piano.wav", "delta-binary-right.png", 0, "delta",1)
+    #extraction("stego-grayscale-delta-mono-piano.wav", "mono-piano.wav", "delta-grayscale-right.png", 0, "delta",1)
     
     #result = compareWatermark("right.png", "magnitudo01-right.png", GRAYSCALE)
     #print("The extracted watermark is correlated to that original? ", result[0])
