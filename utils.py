@@ -8,6 +8,7 @@ import image_managing as im
 
 #Return inverse module m of a
 def imodule(a, m):
+    if m == 0: return 0
     a = a % m
     for x in range(m):
         if (a * x) % m == 1:

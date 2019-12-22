@@ -227,6 +227,14 @@ def imagnitudoDCT(coeffs, wCoeffs, alpha):
     for i in range(len(wCoeffs)):
         #print("wCoeffs[i]: ", wCoeffs[i], " coeffs[i]: ", coeffs[i])
         #if coeffs[i] == 0.0: coeffs[i] = 1.0
+        if math.isinf((wCoeffs[i] - coeffs[i])/(coeffs[i])):
+            print("wCoeffs[i]: ", wCoeffs[i], " coeffs[i]: ", coeffs[i], "i: ", i)
+            watermark.append(abs(math.floor(wCoeffs[i])))
+            continue
+        if math.isnan((wCoeffs[i] - coeffs[i])/(coeffs[i])): 
+            print("wCoeffs[i]: ", wCoeffs[i], " coeffs[i]: ", coeffs[i], "i: ", i)
+            watermark.append(0)
+            continue
         #print(math.floor(abs((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha))))
         watermark.append(math.floor(abs((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha))))
         #watermark.append(abs(math.ceil(wCoeffs[i] - coeffs[i])))
@@ -235,6 +243,8 @@ def imagnitudoDCT(coeffs, wCoeffs, alpha):
 #Extract image coefficients from global watermark array
 def extractImage(watermark):
     nPixel = (watermark[0]*watermark[1])+2
+    print(watermark[0], watermark[1])
+    print(nPixel)
     return watermark[:nPixel]
 
 #The image becomes matrix from array
@@ -242,6 +252,7 @@ def createImgMatrix(image):
     width = image[0]
     heigth = image[1]
     matrixImg = np.reshape(image[2:], (width, heigth))
+    print(matrixImg)
     return matrixImg
 
 #Convert numpy type to Image type
