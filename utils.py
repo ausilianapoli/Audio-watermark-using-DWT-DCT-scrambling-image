@@ -135,7 +135,7 @@ def fixSizeImg(img, toFixImg, imgMode):
             nImage.putpixel(xy=(i,j),value=value)
     return nImage
 
-def setBit(coeff, bit, i, j):
+def setBit(coeff, bit, mode):
     """
     if coeff[i] > coeff[j]:
         if bit == 0:
@@ -145,23 +145,34 @@ def setBit(coeff, bit, i, j):
             coeff = swap(coeff, i, j)
     return coeff
     """
-    if bit == 255:
-        coeff[i] = 10
-    else:
-        coeff[i] = -10
+    if mode in ("binary",0):
+        if bit == 255:
+            coeff[-1] = 255
+        else:
+            coeff[-1] = 0
+
+    if mode in ("grayscale",1):
+        whole, dec = splitFloat(float(coeff[-1]))
+        number = joinFloat(bit, dec)
+        coeff[-1] = number
+
     return coeff
     
-def getBit(coeff, i, j):
+def getBit(coeff):
     """
     if coeff[i] > coeff[j]:
         return 255
     else:
         return 0
     """
-    if coeff[i] > 0:
+    if coeff[-1] > 250:
         return 255
-    else: 
+    elif coeff[-1] < 1:
         return 0
+    else:
+        return int(coeff[-1])
+
+        
     
 def swap(coeff, i, j):
     swapped = coeff.copy()

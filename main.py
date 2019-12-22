@@ -74,7 +74,7 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
     #2 run DWT on audio file
     DWTCoeffs = getDWT(audioData, WAVELET_TYPE, WAVELET_MODE)
     cA2, cD2, cD1 = DWTCoeffs
-    #print(cA2[15:])
+
     #3 divide by frame & #4 run DCT on DWT coeffs
     if frames == 1:
         cA2 = am.audioToFrame(cA2, LEN_FRAMES)
@@ -95,8 +95,8 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
     elif embeddingMode == "lsb":
         wCoeffs = watermark.LSB(DCTCoeffs, payload)
     elif embeddingMode == "delta":
-        wCoeffs = watermark.deltaDCT(DCTCoeffs, payload)
-    
+        wCoeffs = watermark.deltaDCT(DCTCoeffs, payload, imageMode)
+
     #7 run iDCT and #8 join audio frames
     if frames == 1:
         iWCoeffs = np.copy(wCoeffs)
@@ -123,11 +123,10 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
     #1 load audio file
     audioData, tupleAudio = getAudio(audio)
     stegoAudioData, stegoTupleAudio = getAudio(stegoAudio)
-    print(stegoAudioData[30:])
+
     #2 run DWT on audio file
     DWTCoeffs = getDWT(audioData, WAVELET_TYPE, WAVELET_MODE)
     cA2, cD2, cD1 = DWTCoeffs
-    
 
     stegoDWTCoeffs = getDWT(stegoAudioData, WAVELET_TYPE, WAVELET_MODE)
     stegocA2, stegocD2, stegocD1 = stegoDWTCoeffs
@@ -155,7 +154,7 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
     elif embeddingMode == "lsb":
         payload = watermark.iLSB(stegoDCTCoeffs)
     elif embeddingMode == "delta":
-        payload = watermark.ideltaDCT(stegoDCTCoeffs, stegoDCTCoeffs)
+        payload = watermark.ideltaDCT(stegoDCTCoeffs)
     
     #6 inverse scrambling of payload
     payload = getiScrambling(payload, SCRAMBLING_TECHNIQUES[scramblingMode])
@@ -184,13 +183,14 @@ if __name__ == "__main__":
     
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo01", 2, GRAYSCALE, "magnitudo", 1)
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-lsb", 0, BINARY, "lsb")
-    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-delta", 0, BINARY, "delta",1)
-
+    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-binary-delta", 0, BINARY, "delta",1)
+    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-grayscale-delta", 0, GRAYSCALE, "delta",1)
     #print(wCoeffs)
     
     #extraction(wCoeffs, "mono-piano.wav", "magnitudo01-right.png", 2, "magnitudo", 1)
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
-    extraction("stego-delta-mono-piano.wav", "mono-piano.wav", "delta-right.png", 0, "delta",1)
+    extraction("stego-binary-delta-mono-piano.wav", "mono-piano.wav", "delta-binary-right.png", 0, "delta",1)
+    extraction("stego-grayscale-delta-mono-piano.wav", "mono-piano.wav", "delta-grayscale-right.png", 0, "delta",1)
     
     #result = compareWatermark("right.png", "magnitudo01-right.png", GRAYSCALE)
     #print("The extracted watermark is correlated to that original? ", result[0])

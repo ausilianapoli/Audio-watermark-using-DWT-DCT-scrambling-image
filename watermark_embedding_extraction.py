@@ -21,8 +21,8 @@ def isImgBinary(image):
     return image
 
 #Embedding of width and heigth. Audio must be linear and not frames
-def sizeEmbedding(audio, width, heigth):
-    
+def sizeEmbedding(audio, width, height):
+    """
     bWidth = decToBinary(width, 16)
     bheigth = decToBinary(heigth, 16)
 
@@ -35,20 +35,16 @@ def sizeEmbedding(audio, width, heigth):
 
     return embedded
     """
-    bWidth = decToBinary(width, 16)
-    bheigth = decToBinary(heigth, 16)
-
     embedded = audio.copy()
 
     #Embedding width and heigth
-    for w in range(16):
-        embedded[w] = setBit(embedded[w],int(bWidth[w]))
-        embedded[w+16] = setBit(embedded[w+16],int(bheigth[w]))
+    embedded[0][-1:] = width
+    embedded[1][-1:] = height
 
     return embedded
-    """
-def sizeExtraction(audio):
     
+def sizeExtraction(audio):
+    """
     bWidth, bheigth = ("","")
 
     #Extraction of width and heigth
@@ -61,18 +57,9 @@ def sizeExtraction(audio):
 
     return width, heigth
     """
-    bWidth, bheigth = ("","")
-
     #Extraction of width and heigth
-    for w in range(16):
-        bWidth += str(getBit(audio[w]))
-        bheigth += str(getBit(audio[w+16]))
-
-    width = binaryToDec(bWidth)
-    heigth = binaryToDec(bheigth)
-
-    return width, heigth
-    """
+    return audio[0][-1:], audio[1][-1:]
+    
 #Check if audio is divided in frames:
     # if true, it joins audio and then the inverse will be called
     # if false, it does nothing
@@ -86,7 +73,8 @@ def isJoinedAudio(audio):
     return joinAudio, numOfFrames
 
 def iisJoinedAudio(audio, numOfFrames):
-    return audioToFrame(audio, numOfFrames)
+    if type(audio[0]) in (np.int16, np.int64, np.float64, int, float):
+        return audioToFrame(audio, numOfFrames)
 
 def LSB(audio, image):   
     image = isImgBinary(image)  
@@ -130,25 +118,28 @@ def iLSB(audio):
     return image
 
 #Delta embedding mixed with LSB technique for embedding of width and heigth
-def deltaDCT(coeffs, image):
-    image = isImgBinary(image)
+def deltaDCT(coeffs, image, mode):
+    if mode in ("binary",0):
+        image = isImgBinary(image)
+    if mode in ("grayscale",1):
+        image = isImgGrayScale(image)
+    
     joinCoeffs = coeffs.copy()
 
     coeffsLen = len(coeffs)
     frameLen = len(coeffs[0])
     width, heigth = imgSize(image)
-    if (width * heigth) + 32 >= coeffsLen:
+    if (width * heigth) + 2 >= coeffsLen:
         sys.exit("DELTA DCT: Cover dimension is not sufficient for this payload size!")
 
-    #joinCoeffs = sizeEmbedding(joinCoeffs, width, heigth)
+    joinCoeffs = sizeEmbedding(joinCoeffs, width, heigth)
 
     #Embedding watermark
     for i in range(width):
         for j in range(heigth):
             value = image.getpixel(xy=(i,j))
             x = i*heigth + j
-
-            joinCoeffs[x+2] = setBit(joinCoeffs[x+2], value, 3, 1)
+            joinCoeffs[x+2] = setBit(joinCoeffs[x+2], value, mode)
          
     return joinCoeffs
     """
@@ -174,7 +165,7 @@ def deltaDCT(coeffs, image):
     return joinCoeffs
     """
 
-def ideltaDCT(coeffs, wCoeffs):
+def ideltaDCT(coeffs):
     joinCoeffs = coeffs.copy()
     width, heigth = (128,128)#sizeExtraction(joinCoeffs)
     extracted = Image.new("L",(width,heigth))
@@ -184,7 +175,7 @@ def ideltaDCT(coeffs, wCoeffs):
     for i in range(width):
         for j in range(heigth):
             x = i*heigth + j
-            value = getBit(joinCoeffs[x+2], 3, 1)
+            value = getBit(joinCoeffs[x+2])
             extracted.putpixel(xy=(i,j),value=value)
 
     return extracted
