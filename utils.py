@@ -4,7 +4,6 @@ import numpy as np
 import bitstring
 import sys
 from PIL import Image
-import image_managing as im
 
 #Return inverse module m of a
 def imodule(a, m):
@@ -125,8 +124,8 @@ def ImageToFlattedArray(image):
 #Procedure to have two images of same size
 def fixSizeImg(img, toFixImg, imgMode):
     mode = ("L" if imgMode == 1 else "1")
-    width, heigth = im.imgSize(img)
-    fWidth, fHeigth = im.imgSize(toFixImg)
+    width, heigth = img.size
+    fWidth, fHeigth = toFixImg.size
     nImage = Image.new(mode, (width, heigth))
     for i in range(width):
         if i >= fWidth: break
