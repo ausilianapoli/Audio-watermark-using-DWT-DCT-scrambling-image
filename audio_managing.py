@@ -1,5 +1,5 @@
 from scipy.io import wavfile
-from scipy.fftpack import dct, idct
+from scipy.fftpack import dct, idct, fft, fftfreq, ifft
 import subprocess as sp
 import platform
 from utils import makeFileName
@@ -56,7 +56,7 @@ def isMono(dataAudio):
 
 #Normalize data signal in int16 suitable for wav library
 def normalizeForWav(data):
-    return np.int16(data)
+    return np.int16(data.real)
 
 #Save processed file audio with wav format
 def saveWavFile(path, samplerate, signal, prefix):
@@ -139,6 +139,21 @@ def iDCT(data):
     idctData = idct(data, type = 2, norm = "ortho")
     return idctData
 
+#Get FFT of data
+def FFT(tupleAudio):
+    datafft = fft(tupleAudio[AUDIO_DATA])
+    fftabs = abs(datafft)
+    ttl = list(tupleAudio[AUDIO_DATA].shape) #to extract tuple's values as int first it converts into list
+    shape = ttl.pop() #and then it is popped the single element of list
+    freqs = fftfreq(shape, 1./tupleAudio[SAMPLERATE])
+    t = (fftabs, freqs, datafft)
+    return t
+
+#Get the inverse of FFT
+def iFFT(data):
+    return ifft(data)
+
+
 '''
 TESTING
 '''
@@ -184,4 +199,7 @@ if __name__ == "__main__":
     print("iDWT + iDCT == data audio? ", data == tupleAudio[AUDIO_DATA])
     saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], data, "dwt-dct")
 
+    FFTtuple = FFT(tupleAudio)
+    data = normalizeForWav(iFFT(FFTtuple[2]))
+    saveWavFile(tupleAudio[AUDIO_PATH], tupleAudio[SAMPLERATE], data, "fft")
 
