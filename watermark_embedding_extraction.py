@@ -225,8 +225,11 @@ def imagnitudoDCT(coeffs, wCoeffs, alpha):
     watermark = []
     #print(wCoeffs)
     for i in range(len(wCoeffs)):
+        #print("wCoeffs[i]: ", wCoeffs[i], " coeffs[i]: ", coeffs[i])
+        #if coeffs[i] == 0.0: coeffs[i] = 1.0
+        #print(math.floor(abs((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha))))
         watermark.append(math.floor(abs((wCoeffs[i] - coeffs[i])/(coeffs[i]*alpha))))
-        #watermark.append(math.ceil(wCoeffs[i] - coeffs[i]))
+        #watermark.append(abs(math.ceil(wCoeffs[i] - coeffs[i])))
     return convertToPIL(createImgMatrix(extractImage(watermark)))
 
 #Extract image coefficients from global watermark array
