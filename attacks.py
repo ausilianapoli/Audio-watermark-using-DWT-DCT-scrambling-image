@@ -1,7 +1,8 @@
 import subprocess as sp
 import platform
-from utils import makeFileName
 import os
+import numpy as np
+from utils import makeFileName
 
 #The audio amplitude is scaling of factor t
 def amplitudeScaling(data, t):
@@ -19,3 +20,11 @@ def resampling(path, sampleRate):
                     .format(path, sampleRate, name)
         sp.call(cmdffmpegW)
     return name
+
+#It calculates the Low Pass Butterworth based on its mathematic formula (it's used in frequency domain)
+def butterLPFilter(data, frequency, n = 1): #n is order filter
+    mask = np.zeros(data.size) #it will be my filter
+    for i in range(int(len(mask)/2)):
+        mask[i] = 1/(1 + (i/frequency)**(2*n))
+        mask[len(mask) - 1 - i] =  mask[i]
+    return mask*data

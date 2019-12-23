@@ -26,6 +26,9 @@ TRIANGULAR_PARAMETERS = [5, 3, 1] #c,a,d
 #embedding
 ALPHA = 0.1
 
+#attacks
+CUTOFF_FREQUENCY = 22050
+
 def getAudio(path):
     tupleAudio = am.readWavFile(path)
     audioData = am.audioData(tupleAudio)
@@ -195,9 +198,14 @@ def attackStego(stegoAudio):
     tAmplitude = [0.5, 2]
     for i in range(len(tAmplitude)):
         getStego(a.amplitudeScaling(stegoAudio[2], tAmplitude[i]), stegoAudio, "amplitude{}".format(tAmplitude[i]))
-    sampleRates = [33075, 22050, 11025]
+    sampleRates = [int(stegoAudio[T_SAMPLERATE]*0.75), int(stegoAudio[T_SAMPLERATE]*0.5), int(stegoAudio[T_SAMPLERATE]*0.25)]
     for i in range(len(sampleRates)):
         a.resampling(stegoAudio[T_AUDIO_PATH], sampleRates[i])
+    nLPFilter = [2, 4, 6]
+    tupleFFT = am.FFT(stegoAudio)
+    indexCutoff = am.indexFrequency(tupleFFT[1], stegoAudio[T_SAMPLERATE], CUTOFF_FREQUENCY)
+    for i in range(len(nLPFilter)):
+        getStego(am.iFFT(a.butterLPFilter(tupleFFT[0], indexCutoff, nLPFilter[i])), stegoAudio, "butter{}".format(nLPFilter[i]))
 
 if __name__ == "__main__":
     
