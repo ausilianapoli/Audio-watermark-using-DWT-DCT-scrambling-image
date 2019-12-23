@@ -153,6 +153,8 @@ def FFT(tupleAudio):
 def iFFT(data):
     return ifft(data)
 
+def indexFrequency(freqsFFT, samplerate, frequency):
+    return int((frequency/samplerate)*freqs.size)
 
 '''
 TESTING
