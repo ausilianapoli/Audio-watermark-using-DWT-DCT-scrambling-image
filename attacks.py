@@ -23,8 +23,12 @@ def resampling(path, sampleRate):
 
 #It calculates the Low Pass Butterworth based on its mathematic formula (it's used in frequency domain)
 def butterLPFilter(data, frequency, n = 1): #n is order filter
-    mask = np.zeros(data.size) #it will be my filter
+    mask = np.zeros(data.size)
     for i in range(int(len(mask)/2)):
         mask[i] = 1/(1 + (i/frequency)**(2*n))
         mask[len(mask) - 1 - i] =  mask[i]
     return mask*data
+
+def gaussianNoise(data, sigma):
+    noise = np.random.normal(0.0, sigma, data.size)
+    return data+noise

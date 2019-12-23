@@ -206,6 +206,9 @@ def attackStego(stegoAudio):
     indexCutoff = am.indexFrequency(tupleFFT[1], stegoAudio[T_SAMPLERATE], CUTOFF_FREQUENCY)
     for i in range(len(nLPFilter)):
         getStego(am.iFFT(a.butterLPFilter(tupleFFT[0], indexCutoff, nLPFilter[i])), stegoAudio, "butter{}".format(nLPFilter[i]))
+    sigmaGauss = [0.00005, 0.0001, 0.00015, 0.0002]
+    for i in range(len(sigmaGauss)):
+        getStego(a.gaussianNoise(am.audioData(stegoAudio), sigmaGauss[i]), stegoAudio, "gauss{}".format(sigmaGauss[i]))
 
 if __name__ == "__main__":
     
@@ -227,6 +230,7 @@ if __name__ == "__main__":
     print("SNR of {} is: {}\nSNR of {} is: {}".format("mono-piano.wav", snr[0], "stego-grayscale-delta-mono-piano.wav", snr[1]))
     
     attackStego("stego-grayscale-delta-mono-piano.wav")
+    
     
     """
     img = im.loadImage("right.png")
