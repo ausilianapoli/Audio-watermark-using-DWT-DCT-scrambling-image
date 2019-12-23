@@ -4,6 +4,7 @@ import audio_managing as am
 import watermark_embedding_extraction as watermark
 from utils import makeFileName, ImageToFlattedArray, fixSizeImg
 import metrics as m
+import attacks as a
 
 #audio
 T_AUDIO_PATH = 0
@@ -188,7 +189,16 @@ def compareAudio(audio, stegoAudio):
     snr = m.SNR(audio)
     snrStego = m.SNR(stegoAudio)
     return snr, snrStego
-        
+
+def attackStego(stegoAudio):
+    stegoAudio = am.readWavFile(stegoAudio)
+    tAmplitude = [0.5, 2]
+    for i in range(len(tAmplitude)):
+        getStego(a.amplitudeScaling(stegoAudio[2], tAmplitude[i]), stegoAudio, "amplitude{}".format(tAmplitude[i]))
+    sampleRates = [33075, 22050, 11025]
+    for i in range(len(sampleRates)):
+        a.resampling(stegoAudio[T_AUDIO_PATH], sampleRates[i])
+
 if __name__ == "__main__":
     
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo01", 2, GRAYSCALE, "magnitudo", 1)
@@ -207,6 +217,8 @@ if __name__ == "__main__":
     print("The PSNR between the two watermarks is: ", result[1])
     snr = compareAudio("mono-piano.wav", "stego-grayscale-delta-mono-piano.wav")
     print("SNR of {} is: {}\nSNR of {} is: {}".format("mono-piano.wav", snr[0], "stego-grayscale-delta-mono-piano.wav", snr[1]))
+    
+    attackStego("stego-grayscale-delta-mono-piano.wav")
     
     """
     img = im.loadImage("right.png")
