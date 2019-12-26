@@ -1,4 +1,4 @@
-from utils import setLastBit, getLastBit, decToBinary, binaryToDec, normalize, inormalize, splitFloat, joinFloat, setBit, getBit
+from utils import *
 from PIL import Image
 from audio_managing import frameToAudio, audioToFrame
 from image_managing import binarization, grayscale, imgSize
@@ -22,43 +22,17 @@ def isImgBinary(image):
 
 #Embedding of width and heigth. Audio must be linear and not frames
 def sizeEmbedding(audio, width, height):
-    """
-    bWidth = decToBinary(width, 16)
-    bheigth = decToBinary(heigth, 16)
-
     embedded = audio.copy()
 
     #Embedding width and heigth
-    for w in range(16):
-        embedded[w] = setLastBit(embedded[w],int(bWidth[w]))
-        embedded[w+16] = setLastBit(embedded[w+16],int(bheigth[w]))
-
-    return embedded
-    """
-    embedded = audio.copy()
-
-    #Embedding width and heigth
-    embedded[0][-1:] = width
-    embedded[1][-1:] = height
+    embedded[0][-1] = width
+    embedded[1][-1] = height
 
     return embedded
     
 def sizeExtraction(audio):
-    """
-    bWidth, bheigth = ("","")
-
     #Extraction of width and heigth
-    for w in range(16):
-        bWidth += str(getLastBit(audio[w]))
-        bheigth += str(getLastBit(audio[w+16]))
-
-    width = binaryToDec(bWidth)
-    heigth = binaryToDec(bheigth)
-
-    return width, heigth
-    """
-    #Extraction of width and heigth
-    return audio[0][-1:], audio[1][-1:]
+    return int(audio[0][-1]), int(audio[1][-1])
     
 #Check if audio is divided in frames:
     # if true, it joins audio and then the inverse will be called
@@ -118,11 +92,86 @@ def iLSB(audio):
     return image
 
 #Delta embedding mixed with LSB technique for embedding of width and heigth
-def deltaDCT(coeffs, image, mode):
-    if mode in ("binary",0):
-        image = isImgBinary(image)
-    if mode in ("grayscale",1):
-        image = isImgGrayScale(image)
+def bruteBinary(coeffs, image):
+    image = isImgBinary(image)
+ 
+    joinCoeffs = coeffs.copy()
+
+    coeffsLen = len(coeffs)
+    frameLen = len(coeffs[0])
+    width, heigth = imgSize(image)
+    if (width * heigth) + 2 >= coeffsLen:
+        sys.exit("DELTA DCT: Cover dimension is not sufficient for this payload size!")
+
+    joinCoeffs = sizeEmbedding(joinCoeffs, width, heigth)
+
+    #Embedding watermark
+    for i in range(width):
+        for j in range(heigth):
+            value = image.getpixel(xy=(i,j))
+            x = i*heigth + j
+            joinCoeffs[x+2] = setBinary(joinCoeffs[x+2], value)
+         
+    return joinCoeffs
+
+
+def ibruteBinary(coeffs):
+    joinCoeffs = coeffs.copy()
+    width, heigth = (128,128)#sizeExtraction(joinCoeffs)
+    extracted = Image.new("L",(width,heigth))
+    coeffsLen = len(coeffs)
+
+    #Extraction watermark
+    for i in range(width):
+        for j in range(heigth):
+            x = i*heigth + j
+            value = getBinary(joinCoeffs[x+2])
+            extracted.putpixel(xy=(i,j),value=value)
+
+    return extracted
+
+#Delta embedding mixed with LSB technique for embedding of width and heigth
+def delta(coeffs, image):
+    image = isImgBinary(image)
+ 
+    joinCoeffs = coeffs.copy()
+
+    coeffsLen = len(coeffs)
+    frameLen = len(coeffs[0])
+    width, heigth = imgSize(image)
+    if (width * heigth) + 2 >= coeffsLen:
+        sys.exit("DELTA DCT: Cover dimension is not sufficient for this payload size!")
+
+    joinCoeffs = sizeEmbedding(joinCoeffs, width, heigth)
+
+    #Embedding watermark
+    for i in range(width):
+        for j in range(heigth):
+            value = image.getpixel(xy=(i,j))
+            x = i*heigth + j
+            joinCoeffs[x+2] = setBinary(joinCoeffs[x+2], value)
+         
+    return joinCoeffs
+
+
+def idelta(coeffs):
+    joinCoeffs = coeffs.copy()
+    width, heigth = (128,128)#sizeExtraction(joinCoeffs)
+    extracted = Image.new("L",(width,heigth))
+    coeffsLen = len(coeffs)
+
+    #Extraction watermark
+    for i in range(width):
+        for j in range(heigth):
+            x = i*heigth + j
+            value = getBinary(joinCoeffs[x+2])
+            extracted.putpixel(xy=(i,j),value=value)
+
+    return extracted
+
+#Delta embedding mixed with LSB technique for embedding of width and heigth
+def bruteGray(coeffs, image):
+    image = isImgGrayScale(image)
     
     joinCoeffs = coeffs.copy()
 
@@ -139,33 +188,12 @@ def deltaDCT(coeffs, image, mode):
         for j in range(heigth):
             value = image.getpixel(xy=(i,j))
             x = i*heigth + j
-            joinCoeffs[x+2] = setBit(joinCoeffs[x+2], value, mode)
+            joinCoeffs[x+2] = setGray(joinCoeffs[x+2], value)
          
     return joinCoeffs
-    """
-    image = isImgGrayScale(image)
-    #joinCoeffs, numOfFrames = isJoinedAudio(coeffs)
-    joinCoeffs = coeffs.copy()
-    coeffsLen = len(joinCoeffs)
-    width, heigth = imgSize(image)
-    if (width * heigth) + 2 >= coeffsLen:
-       sys.exit("DELTA DCT: Cover dimension is not sufficient for this payload size!")
 
-    #joinCoeffs = sizeEmbedding(joinCoeffs, width, heigth)
 
-    #Embedding watermark
-    for i in range(width):
-        for j in range(heigth):
-            value = image.getpixel(xy=(i,j))
-            x = i*heigth + j
-            whole, dec = splitFloat(joinCoeffs[x+2][0])
-            coeff = joinFloat(whole+value, dec)
-            joinCoeffs[x+2][0] = coeff
-            
-    return joinCoeffs
-    """
-
-def ideltaDCT(coeffs):
+def ibruteGray(coeffs):
     joinCoeffs = coeffs.copy()
     width, heigth = (128,128)#sizeExtraction(joinCoeffs)
     extracted = Image.new("L",(width,heigth))
@@ -175,27 +203,10 @@ def ideltaDCT(coeffs):
     for i in range(width):
         for j in range(heigth):
             x = i*heigth + j
-            value = getBit(joinCoeffs[x+2])
+            value = getGray(joinCoeffs[x+2])
             extracted.putpixel(xy=(i,j),value=value)
 
     return extracted
-    """
-    joinCoeffs = coeffs.copy()
-    joinWCoeffs = wCoeffs.copy()
-    
-    width, heigth = (128,128)#sizeExtraction(joinWCoeffs)
-    extracted = Image.new("L",(width,heigth))
-    coeffsLen = len(coeffs)
-
-    #Extraction watermark
-    for i in range(width):
-        for j in range(heigth):
-            x = i*heigth + j
-            value = int((abs(joinWCoeffs[x+2][0] - joinCoeffs[x+2][0])))
-            extracted.putpixel(xy=(i,j),value=value)
-
-    return extracted
-    """
 
 #The watermark is embedded into k coefficents of greater magnitudo
 def magnitudoDCT(coeffs, watermark, alpha):

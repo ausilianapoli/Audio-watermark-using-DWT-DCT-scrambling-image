@@ -135,44 +135,27 @@ def fixSizeImg(img, toFixImg, imgMode):
             nImage.putpixel(xy=(i,j),value=value)
     return nImage
 
-def setBit(coeff, bit, mode):
-    """
-    if coeff[i] > coeff[j]:
-        if bit == 0:
-           coeff = swap(coeff, i, j)
+def setBinary(coeff, bit):
+    if bit == 255:
+        coeff[-1] = 10
     else:
-        if bit == 1:
-            coeff = swap(coeff, i, j)
-    return coeff
-    """
-    if mode in ("binary",0):
-        if bit == 255:
-            coeff[-1] = 255
-        else:
-            coeff[-1] = 0
-
-    if mode in ("grayscale",1):
-        whole, dec = splitFloat(float(coeff[-1]))
-        number = joinFloat(bit, dec)
-        coeff[-1] = number
+        coeff[-1] = -10
 
     return coeff
     
-def getBit(coeff):
-    """
-    if coeff[i] > coeff[j]:
+def getBinary(coeff):
+    if coeff[-1] > 0:
         return 255
     else:
-        return 0
-    """
-    if coeff[-1] > 250:
-        return 255
-    elif coeff[-1] < 1:
-        return 0
-    else:
-        return int(coeff[-1])
+        return 0 
 
-        
+def setGray(coeff, bit):
+    coeff[-1] = bit - 127
+
+    return coeff
+    
+def getGray(coeff):
+    return int(coeff[-1] + 127)
     
 def swap(coeff, i, j):
     swapped = coeff.copy()
@@ -181,3 +164,9 @@ def swap(coeff, i, j):
     swapped[j] = tmp
 
     return swapped
+"""
+def subVectors(coeff):
+    coeffsLen = len(coeffs)
+    v1 = np.zeros(coeffsLen)
+    v2 = 
+"""
