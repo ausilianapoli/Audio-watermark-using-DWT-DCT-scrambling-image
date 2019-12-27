@@ -224,14 +224,14 @@ if __name__ == "__main__":
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-lsb", 0, BINARY, "lsb")
     wCoeffs = embedding("mono-piano.wav", "right.png", "stego-binary-brute", 1, BINARY, "bruteBinary",1)
     wCoeffs = embedding("mono-piano.wav", "right.png", "stego-gray-brute", 1, GRAYSCALE, "bruteGray",1)
-    #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-grayscale-delta", 0, GRAYSCALE, "delta",1)
+    wCoeffs = embedding("mono-piano.wav", "right.png", "stego-binary-delta", 0, BINARY, "delta",1)
     #print(wCoeffs)
     
     #extraction("stego-magnitudo001-mono-piano.wav", "mono-piano.wav", "magnitudo001-right.png", 2, "magnitudo", 1)
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
     extraction("stego-binary-brute-mono-piano.wav", "mono-piano.wav", "brute-binary-right.png", 1, "bruteBinary",1)
     extraction("stego-gray-brute-mono-piano.wav", "mono-piano.wav", "brute-gray-right.png", 1, "bruteGray",1)
-    #extraction("stego-grayscale-delta-mono-piano.wav", "mono-piano.wav", "delta-grayscale-right.png", 0, "delta",1)
+    extraction("stego-binary-delta-mono-piano.wav", "mono-piano.wav", "delta-binary-right.png", 0, "delta",1)
     """
     result = compareWatermark("right.png", "delta-grayscale-right.png", GRAYSCALE)
     print("The extracted watermark is correlated to that original? ", result[0])

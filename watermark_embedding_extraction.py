@@ -131,40 +131,52 @@ def ibruteBinary(coeffs):
     return extracted
 
 #Delta embedding mixed with LSB technique for embedding of width and heigth
-def delta(coeffs, image):
+def deltaDCT(coeffs, image):
     image = isImgBinary(image)
- 
+    width, heigth = imgSize(image)
+    
     joinCoeffs = coeffs.copy()
 
     coeffsLen = len(coeffs)
-    frameLen = len(coeffs[0])
-    width, heigth = imgSize(image)
-    if (width * heigth) + 2 >= coeffsLen:
-        sys.exit("DELTA DCT: Cover dimension is not sufficient for this payload size!")
-
-    joinCoeffs = sizeEmbedding(joinCoeffs, width, heigth)
 
     #Embedding watermark
     for i in range(width):
         for j in range(heigth):
             value = image.getpixel(xy=(i,j))
             x = i*heigth + j
-            joinCoeffs[x+2] = setBinary(joinCoeffs[x+2], value)
+            v1, v2 = subVectors(joinCoeffs[x])
+
+            norm1, u1 = normCalc(v1)
+            norm2, u2 = normCalc(v2)
+            
+            norm = (norm1 + norm2) / 2
+            norm1, norm2 = setDelta(norm, 10, value)
+
+            v1 = inormCalc(norm1, u1)
+            v2 = inormCalc(norm2, u2)
+
+            joinCoeffs[x] = isubVectors(v1, v2)
          
     return joinCoeffs
 
 
-def idelta(coeffs):
+def ideltaDCT(coeffs):
     joinCoeffs = coeffs.copy()
     width, heigth = (128,128)#sizeExtraction(joinCoeffs)
-    extracted = Image.new("L",(width,heigth))
+    extracted = Image.new("1",(width,heigth))
     coeffsLen = len(coeffs)
 
     #Extraction watermark
     for i in range(width):
         for j in range(heigth):
             x = i*heigth + j
-            value = getBinary(joinCoeffs[x+2])
+            v1, v2 = subVectors(joinCoeffs[x])
+
+            norm1, u1 = normCalc(v1)
+            norm2, u2 = normCalc(v2)
+            
+            value = getDelta(norm1 , norm2)
+            
             extracted.putpixel(xy=(i,j),value=value)
 
     return extracted

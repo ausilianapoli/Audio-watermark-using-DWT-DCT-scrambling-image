@@ -156,17 +156,53 @@ def setGray(coeff, bit):
     
 def getGray(coeff):
     return int(coeff[-1] + 127)
-    
-def swap(coeff, i, j):
-    swapped = coeff.copy()
-    tmp = swapped[i]
-    swapped[i] = swapped[j]
-    swapped[j] = tmp
 
-    return swapped
-"""
+def setDelta(norm, delta, value):
+    if value == 255:
+        return (norm + delta), (norm - delta)
+    else:
+        return (norm - delta), (norm + delta)
+
+def getDelta(norm1 , norm2):
+    if norm1 > norm2:
+        return 255
+    else:
+        return 0
+
 def subVectors(coeff):
-    coeffsLen = len(coeffs)
+    coeffsLen = len(coeff) // 2
     v1 = np.zeros(coeffsLen)
-    v2 = 
-"""
+    v2 = np.zeros(coeffsLen)
+
+    for i in range(coeffsLen):
+        v1[i] = coeff[2*(i+1) - 1]
+        v2[i] = coeff[2*(i+1) - 2]
+
+    return v1, v2
+
+def isubVectors(v1, v2):
+    coeffsLen = len(v1)
+    v = np.zeros(coeffsLen * 2)
+
+    for i in range(coeffsLen):
+        v[2*(i+1) - 1] = v1[i]
+        v[2*(i+1) - 2] = v2[i]
+    
+    return v
+
+def inormCalc(norm1, u1):
+    vLen = len(u1)
+    v1 = np.zeros(vLen)
+
+    for i in range(vLen):
+        v1[i] = norm1 * u1[i]
+
+    return v1
+
+def normCalc(v):
+    norm = 0
+    for coeff in v:
+        norm += coeff**2
+    norm = math.sqrt(norm)
+    u = v/norm
+    return norm, u
