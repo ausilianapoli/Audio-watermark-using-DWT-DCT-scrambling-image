@@ -9,11 +9,11 @@ import attacks as a
 #audio
 T_AUDIO_PATH = 0
 T_SAMPLERATE = 1
-LEN_FRAMES = 24
+LEN_FRAMES = 16
 
 #DWT
-WAVELETS_LEVEL = 2
-WAVELET_TYPE = "haar"
+WAVELETS_LEVEL = 1
+WAVELET_TYPE = "db1"
 WAVELET_MODE = "symmetric"
 
 #scrambling
@@ -77,18 +77,19 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
 
     #2 run DWT on audio file
     DWTCoeffs = getDWT(audioData, WAVELET_TYPE, WAVELET_MODE)
-    cA2, cD2, cD1 = DWTCoeffs
+    #cA, cD2, cD1 = DWTCoeffs #level 2
+    cA, cD1 = DWTCoeffs #level 1
 
     #3 divide by frame & #4 run DCT on DWT coeffs
     if frames == 1:
-        cA2 = am.audioToFrame(cA2, LEN_FRAMES)
-        DCTCoeffs = np.copy(cA2)
+        cA = am.audioToFrame(cA, LEN_FRAMES)
+        DCTCoeffs = np.copy(cA)
 
-        for i in range(cA2.shape[0]):
-            DCTCoeffs[i] = am.DCT(cA2[i])
+        for i in range(cA.shape[0]):
+            DCTCoeffs[i] = am.DCT(cA[i])
     #4 run DCT on DWT coeffs   
     else:
-        DCTCoeffs = am.DCT(cA2)
+        DCTCoeffs = am.DCT(cA)
 
     #5 scrambling image watermark
     payload = getScrambling(imagePath, SCRAMBLING_TECHNIQUES[scramblingMode], imageMode)
@@ -119,7 +120,8 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
 
     
     #9 run iDWT
-    DWTCoeffs = iWCoeffs, cD2, cD1
+    #DWTCoeffs = iWCoeffs, cD2, cD1 #level 2
+    DWTCoeffs = iWCoeffs, cD1 #level 1
     iWCoeffs = am.iDWT(DWTCoeffs, WAVELET_TYPE, WAVELET_MODE)
 
     #10 save new audio file
@@ -134,27 +136,29 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
 
     #2 run DWT on audio file
     DWTCoeffs = getDWT(audioData, WAVELET_TYPE, WAVELET_MODE)
-    cA2, cD2, cD1 = DWTCoeffs
+    #cA, cD2, cD1 = DWTCoeffs #level 2
+    cA, cD1 = DWTCoeffs #level 1
 
     stegoDWTCoeffs = getDWT(stegoAudioData, WAVELET_TYPE, WAVELET_MODE)
-    stegocA2, stegocD2, stegocD1 = stegoDWTCoeffs
+    #stegocA2, stegocD2, stegocD1 = stegoDWTCoeffs #level 2
+    stegocA, stegocD1 = stegoDWTCoeffs #level 1
     
     #3 divide by frame & #4 run DCT on DWT coeffs
     if frames == 1:
-        cA2 = am.audioToFrame(cA2, LEN_FRAMES)
-        DCTCoeffs = np.copy(cA2)
-        for i in range(cA2.shape[0]):
-            DCTCoeffs[i] = am.DCT(cA2[i])
+        cA = am.audioToFrame(cA, LEN_FRAMES)
+        DCTCoeffs = np.copy(cA)
+        for i in range(cA.shape[0]):
+            DCTCoeffs[i] = am.DCT(cA[i])
         
-        stegocA2 = am.audioToFrame(stegocA2, LEN_FRAMES)
-        stegoDCTCoeffs = np.copy(stegocA2)
-        for i in range(stegocA2.shape[0]):
-            stegoDCTCoeffs[i] = am.DCT(stegocA2[i])
+        stegocA = am.audioToFrame(stegocA, LEN_FRAMES)
+        stegoDCTCoeffs = np.copy(stegocA)
+        for i in range(stegocA.shape[0]):
+            stegoDCTCoeffs[i] = am.DCT(stegocA[i])
 
     #4 run DCT on DWT coeffs   
     else:
-        DCTCoeffs = am.DCT(cA2)
-        stegoDCTCoeffs = am.DCT(stegocA2)
+        DCTCoeffs = am.DCT(cA)
+        stegoDCTCoeffs = am.DCT(stegocA)
         
     #print("DCTCoeffs: ", DCTCoeffs)
     #print("StegoDCTCoeffs: ", stegoDCTCoeffs)
