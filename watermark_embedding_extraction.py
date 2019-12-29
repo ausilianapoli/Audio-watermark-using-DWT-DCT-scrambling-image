@@ -125,7 +125,10 @@ def ibruteBinary(coeffs):
     for i in range(width):
         for j in range(heigth):
             x = i*heigth + j
-            value = getBinary(joinCoeffs[x+2])
+            try:
+                value = getBinary(joinCoeffs[x+2])
+            except IndexError:
+                value = 0
             extracted.putpixel(xy=(i,j),value=value)
 
     return extracted
@@ -170,8 +173,11 @@ def ideltaDCT(coeffs):
     for i in range(width):
         for j in range(heigth):
             x = i*heigth + j
-            v1, v2 = subVectors(joinCoeffs[x])
-
+            try:
+                v1, v2 = subVectors(joinCoeffs[x])
+            except IndexError:
+                zero = np.zeros(len(joinCoeffs[0]))
+                v1, v2 = subVectors(zero)
             norm1, u1 = normCalc(v1)
             norm2, u2 = normCalc(v2)
             
@@ -215,7 +221,10 @@ def ibruteGray(coeffs):
     for i in range(width):
         for j in range(heigth):
             x = i*heigth + j
-            value = getGray(joinCoeffs[x+2])
+            try:
+                value = getGray(joinCoeffs[x+2])
+            except IndexError:
+                value = 0
             extracted.putpixel(xy=(i,j),value=value)
 
     return extracted
