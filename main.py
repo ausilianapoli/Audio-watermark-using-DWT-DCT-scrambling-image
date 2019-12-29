@@ -213,7 +213,7 @@ def attackStego(stegoAudio):
     tAmplitude = [0.5, 2]
     for i in range(len(tAmplitude)):
         getStego(a.amplitudeScaling(stegoAudio[2], tAmplitude[i]), stegoAudio, "amplitude{}".format(tAmplitude[i]))
-    sampleRates = [int(stegoAudio[T_SAMPLERATE]*0.75), int(stegoAudio[T_SAMPLERATE]*0.5), int(stegoAudio[T_SAMPLERATE]*0.25), int(stegoAudio[T_SAMPLERATE]*2)]
+    sampleRates = [int(stegoAudio[T_SAMPLERATE]*0.75), int(stegoAudio[T_SAMPLERATE]*0.5), int(stegoAudio[T_SAMPLERATE]*0.25), int(stegoAudio[T_SAMPLERATE])+1]
     for i in range(len(sampleRates)):
         a.resampling(stegoAudio[T_AUDIO_PATH], sampleRates[i])
     nLPFilter = [2, 4, 6]
@@ -239,7 +239,7 @@ def main():
     extraction(outputDir + "12000-" + relativeStegoAudio, stegoAudio, outputDir + "12000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
     extraction(outputDir + "24000-" + relativeStegoAudio,stegoAudio, outputDir + "24000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
     extraction(outputDir + "36000-" + relativeStegoAudio,stegoAudio, outputDir + "36000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir + "96000-" + relativeStegoAudio,stegoAudio, outputDir + "96000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "48001-" + relativeStegoAudio,stegoAudio, outputDir + "48001-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
     extraction(outputDir + "amplitude0.5-" + relativeStegoAudio,stegoAudio, outputDir + "amplitude0.5-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
     extraction(outputDir + "amplitude2-" + relativeStegoAudio,stegoAudio, outputDir + "amplitude2-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
     extraction(outputDir + "butter2-" + relativeStegoAudio,stegoAudio, outputDir + "butter2-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
