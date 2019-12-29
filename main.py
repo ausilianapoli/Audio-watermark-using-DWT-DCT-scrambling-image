@@ -1,6 +1,7 @@
 import numpy as np
 import argparse
 import os
+import sys
 import image_managing as im
 import audio_managing as am
 import watermark_embedding_extraction as watermark
@@ -263,11 +264,11 @@ if __name__ == "__main__":
     opt = parser.parse_args()
     
     if os.path.isdir(opt.output) is False:
-        print("Output dir does not exist!")
+        sys.exit("Output dir does not exist!")
     if os.path.isdir(opt.source):
-        print("Source must not be a dir!")
+        sys.exit("Source must not be a dir!")
     if opt.source == '' or opt.watermark == '':
-        print("Input must not be empty!")
+        sys.exit("Input must not be empty!")
     else:
         print(opt)
         main()
