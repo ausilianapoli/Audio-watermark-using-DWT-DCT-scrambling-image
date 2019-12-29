@@ -119,7 +119,7 @@ def ibruteBinary(coeffs):
     joinCoeffs = coeffs.copy()
     width, heigth = (128,128)#sizeExtraction(joinCoeffs)
     extracted = Image.new("L",(width,heigth))
-    coeffsLen = len(coeffs)
+    coeffsLen = len(joinCoeffs)
 
     #Extraction watermark
     for i in range(width):
@@ -173,15 +173,15 @@ def ideltaDCT(coeffs):
     for i in range(width):
         for j in range(heigth):
             x = i*heigth + j
-            try:
+            if x < coeffsLen:
                 v1, v2 = subVectors(joinCoeffs[x])
-            except IndexError:
-                zero = np.zeros(len(joinCoeffs[0]))
-                v1, v2 = subVectors(zero)
-            norm1, u1 = normCalc(v1)
-            norm2, u2 = normCalc(v2)
-            
-            value = getDelta(norm1 , norm2)
+
+                norm1, u1 = normCalc(v1)
+                norm2, u2 = normCalc(v2)
+                
+                value = getDelta(norm1 , norm2)
+            else:
+                value = 0
             
             extracted.putpixel(xy=(i,j),value=value)
 

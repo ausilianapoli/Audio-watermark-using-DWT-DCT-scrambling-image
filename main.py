@@ -136,7 +136,6 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
     #1 load audio file
     audioData, tupleAudio = getAudio(audio)
     stegoAudioData, stegoTupleAudio = getAudio(stegoAudio)
-    print(stegoAudioData.shape)
 
     #2 run DWT on audio file
     DWTCoeffs = getDWT(audioData, WAVELET_TYPE, WAVELET_MODE)
