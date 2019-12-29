@@ -213,7 +213,7 @@ def attackStego(stegoAudio, outputDir):
     stegoAudio = am.readWavFile(stegoAudio)
     tAmplitude = [0.5, 2]
     for i in range(len(tAmplitude)):
-        getStego(a.amplitudeScaling(stegoAudio[2], tAmplitude[i]), stegoAudio, outputDir + "amplitude{}".format(tAmplitude[i]))
+        getStego(a.amplitudeScaling(stegoAudio[2], tAmplitude[i]), stegoAudio, "amplitude{}".format(tAmplitude[i]))
     sampleRates = [int(stegoAudio[T_SAMPLERATE]*0.75), int(stegoAudio[T_SAMPLERATE]*0.5), int(stegoAudio[T_SAMPLERATE]*0.25)]
     for i in range(len(sampleRates)):
         a.resampling(stegoAudio[T_AUDIO_PATH], sampleRates[i])
@@ -221,18 +221,18 @@ def attackStego(stegoAudio, outputDir):
     tupleFFT = am.FFT(stegoAudio)
     indexCutoff = am.indexFrequency(tupleFFT[1], stegoAudio[T_SAMPLERATE], CUTOFF_FREQUENCY)
     for i in range(len(nLPFilter)):
-        getStego(am.iFFT(a.butterLPFilter(tupleFFT[0], indexCutoff, nLPFilter[i])), stegoAudio, outputDir + "butter{}".format(nLPFilter[i]))
+        getStego(am.iFFT(a.butterLPFilter(tupleFFT[0], indexCutoff, nLPFilter[i])), stegoAudio, "butter{}".format(nLPFilter[i]))
     sigmaGauss = [0.00005, 0.0001, 0.00015, 0.0002]
     for i in range(len(sigmaGauss)):
-        getStego(a.gaussianNoise(am.audioData(stegoAudio), sigmaGauss[i]), stegoAudio, outputDir + "gauss{}".format(sigmaGauss[i]))
+        getStego(a.gaussianNoise(am.audioData(stegoAudio), sigmaGauss[i]), stegoAudio, "gauss{}".format(sigmaGauss[i]))
 
 def main():
     outputDir = opt.output + "/"
     stegoImage = outputDir + opt.embedding_mode + "-" + opt.watermark
     stegoAudio = outputDir + "stego-" + opt.embedding_mode + "-" + opt.source
-    #wCoeffs = embedding(opt.source, opt.watermark, outputDir + "stego-" + opt.embedding_mode, opt.scrambling_mode, opt.type_watermark, opt.embedding_mode, 1)
-    #extraction(stegoAudio, opt.source, stegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    #attackStego(stegoAudio, opt.embedding_mode)
+    wCoeffs = embedding(opt.source, opt.watermark, outputDir + "stego-" + opt.embedding_mode, opt.scrambling_mode, opt.type_watermark, opt.embedding_mode, 1)
+    extraction(stegoAudio, opt.source, stegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    attackStego(stegoAudio, opt.embedding_mode)
 
     relativeStegoAudio = "stego-" + opt.embedding_mode + "-" + opt.source
     relativeStegoImage = opt.embedding_mode + "-" + opt.watermark
