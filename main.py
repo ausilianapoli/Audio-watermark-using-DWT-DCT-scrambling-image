@@ -1,4 +1,6 @@
 import numpy as np
+import argparse
+import os
 import image_managing as im
 import audio_managing as am
 import watermark_embedding_extraction as watermark
@@ -9,7 +11,7 @@ import attacks as a
 #audio
 T_AUDIO_PATH = 0
 T_SAMPLERATE = 1
-LEN_FRAMES = 16
+LEN_FRAMES = 4
 
 #DWT
 WAVELETS_LEVEL = 1
@@ -92,7 +94,7 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
         DCTCoeffs = am.DCT(cA)
 
     #5 scrambling image watermark
-    payload = getScrambling(imagePath, SCRAMBLING_TECHNIQUES[scramblingMode], imageMode)
+    payload = getScrambling(imagePath, scramblingMode, imageMode)
  
     #6 embedd watermark image
     if embeddingMode == "magnitudo":
@@ -133,6 +135,7 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
     #1 load audio file
     audioData, tupleAudio = getAudio(audio)
     stegoAudioData, stegoTupleAudio = getAudio(stegoAudio)
+    print(stegoAudioData.shape)
 
     #2 run DWT on audio file
     DWTCoeffs = getDWT(audioData, WAVELET_TYPE, WAVELET_MODE)
@@ -176,7 +179,7 @@ def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode
         payload = watermark.ibruteGray(stegoDCTCoeffs)
     
     #6 inverse scrambling of payload
-    payload = getiScrambling(payload, SCRAMBLING_TECHNIQUES[scramblingMode])
+    payload = getiScrambling(payload, scramblingMode)
     
     #7 save image
     getPayload(payload, outputImagePath)
@@ -205,11 +208,11 @@ def compareAudio(audio, stegoAudio):
     snrStego = m.SNR(stegoAudio)
     return snr, snrStego
 
-def attackStego(stegoAudio):
+def attackStego(stegoAudio, outputDir):
     stegoAudio = am.readWavFile(stegoAudio)
     tAmplitude = [0.5, 2]
     for i in range(len(tAmplitude)):
-        getStego(a.amplitudeScaling(stegoAudio[2], tAmplitude[i]), stegoAudio, "amplitude{}".format(tAmplitude[i]))
+        getStego(a.amplitudeScaling(stegoAudio[2], tAmplitude[i]), stegoAudio, outputDir + "amplitude{}".format(tAmplitude[i]))
     sampleRates = [int(stegoAudio[T_SAMPLERATE]*0.75), int(stegoAudio[T_SAMPLERATE]*0.5), int(stegoAudio[T_SAMPLERATE]*0.25)]
     for i in range(len(sampleRates)):
         a.resampling(stegoAudio[T_AUDIO_PATH], sampleRates[i])
@@ -217,26 +220,75 @@ def attackStego(stegoAudio):
     tupleFFT = am.FFT(stegoAudio)
     indexCutoff = am.indexFrequency(tupleFFT[1], stegoAudio[T_SAMPLERATE], CUTOFF_FREQUENCY)
     for i in range(len(nLPFilter)):
-        getStego(am.iFFT(a.butterLPFilter(tupleFFT[0], indexCutoff, nLPFilter[i])), stegoAudio, "butter{}".format(nLPFilter[i]))
+        getStego(am.iFFT(a.butterLPFilter(tupleFFT[0], indexCutoff, nLPFilter[i])), stegoAudio, outputDir + "butter{}".format(nLPFilter[i]))
     sigmaGauss = [0.00005, 0.0001, 0.00015, 0.0002]
     for i in range(len(sigmaGauss)):
-        getStego(a.gaussianNoise(am.audioData(stegoAudio), sigmaGauss[i]), stegoAudio, "gauss{}".format(sigmaGauss[i]))
+        getStego(a.gaussianNoise(am.audioData(stegoAudio), sigmaGauss[i]), stegoAudio, outputDir + "gauss{}".format(sigmaGauss[i]))
+
+def main():
+    outputDir = opt.output + "/"
+    stegoImage = outputDir + opt.embedding_mode + "-" + opt.watermark
+    stegoAudio = outputDir + "stego-" + opt.embedding_mode + "-" + opt.source
+    #wCoeffs = embedding(opt.source, opt.watermark, outputDir + "stego-" + opt.embedding_mode, opt.scrambling_mode, opt.type_watermark, opt.embedding_mode, 1)
+    #extraction(stegoAudio, opt.source, stegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    #attackStego(stegoAudio, opt.embedding_mode)
+
+    relativeStegoAudio = "stego-" + opt.embedding_mode + "-" + opt.source
+    relativeStegoImage = opt.embedding_mode + "-" + opt.watermark
+    
+    #extraction(outputDir +"12000-" +relativeStegoAudio, stegoAudio, "12000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    """
+    extraction(outputDir +"24000-" +relativeStegoAudio,stegoAudio, "24000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"36000-" +relativeStegoAudio,stegoAudio, "36000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"amplitude0.5-" +relativeStegoAudio,stegoAudio, "amplitude0.5-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"amplitude2-" +relativeStegoAudio,stegoAudio, "amplitude2-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"butter2-" +relativeStegoAudio,stegoAudio, "butter2-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"butter4-" +relativeStegoAudio,stegoAudio, "butter4-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"butter6-" +relativeStegoAudio,stegoAudio, "butter6-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"gauss0.0001-" +relativeStegoAudio,stegoAudio, "gauss0.0001-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"gauss0.0002-" +relativeStegoAudio,stegoAudio, "gauss0.0002-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"gauss0.00015-" +relativeStegoAudio,stegoAudio, "gauss0.00015-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir +"gauss5e-05-" +relativeStegoAudio,stegoAudio, "gauss5e-05-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    """
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--source', type=str, default='', help='audio input')
+    parser.add_argument('--watermark', type=str, default='', help='watermark to embed')
+    parser.add_argument('--type-watermark', type=str, default='BINARY', choices=['BINARY','GRAYSCALE'], help='Type of watermark')
+    parser.add_argument('--embedding-mode', type=str, default='bruteBinary', choices=['delta','bruteBinary',"bruteGray"], help='Embedding mode')
+    parser.add_argument('--scrambling-mode', type=str, default='lower', choices=['arnold','lower',"upper"], help='Scrambling mode')    
+    parser.add_argument('--output', type=str, default='Output', help='output folder')  
+
+    opt = parser.parse_args()
     
+    if os.path.isdir(opt.output) is False:
+        print("Output dir does not exist!")
+    if os.path.isdir(opt.source):
+        print("Source must not be a dir!")
+    if opt.source == '' or opt.watermark == '':
+        print("Input must not be empty!")
+    else:
+        print(opt)
+        main()
+    """
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-magnitudo01", 2, GRAYSCALE, "magnitudo", 1)
     #wCoeffs = embedding("mono-piano.wav", "right.png", "stego-lsb", 0, BINARY, "lsb")
-    #wCoeffs = embedding("buddy.wav", "right.png", "stego-binary-brute", 1, BINARY, "bruteBinary",1)
+    #wCoeffs = embedding("mono-piano.wav", "right.png", "binaryBrute/stego-binary-brute", 1, BINARY, "bruteBinary",1)
     #wCoeffs = embedding("buddy.wav", "right.png", "stego-gray-brute", 1, GRAYSCALE, "bruteGray",1)
-    wCoeffs = embedding("buddy.wav", "right.png", "stego-binary-delta", 0, BINARY, "delta",1)
+    #wCoeffs = embedding("buddy.wav", "right.png", "stego-binary-delta", 0, BINARY, "delta",1)
     #print(wCoeffs)
     
     #extraction("stego-magnitudo001-mono-piano.wav", "mono-piano.wav", "magnitudo001-right.png", 2, "magnitudo", 1)
     #extraction("stego-lsb-mono-piano.wav", "mono-piano.wav", "lsb-right.png", 0, "lsb")
-    #extraction("stego-binary-brute-buddy.wav", "buddy.wav", "brute-binary-right.png", 1, "bruteBinary",1)
+    #extraction("binaryBrute/stego-binary-brute-mono-piano.wav", "mono-piano.wav", "binaryBrute/brute-binary-right.png", 1, "bruteBinary",1)
     #extraction("stego-gray-brute-buddy.wav", "buddy.wav", "brute-gray-right.png", 1, "bruteGray",1)
-    extraction("stego-binary-delta-buddy.wav", "buddy.wav", "delta-binary-right.png", 0, "delta",1)
-    """
+    #extraction("stego-binary-delta-buddy.wav", "buddy.wav", "delta-binary-right.png", 0, "delta",1)
+    #attackStego("stego-binary-brute-mono-piano.wav", "binaryBrute")
+    result = compareWatermark("right.png", "binaryBrute/brute-binary-right.png", BINARY)
+    print("The extracted watermark is correlated to that original? ", result[0])
+    print("The PSNR between the two watermarks is: ", result[1])
+    
     result = compareWatermark("right.png", "delta-grayscale-right.png", GRAYSCALE)
     print("The extracted watermark is correlated to that original? ", result[0])
     print("The PSNR between the two watermarks is: ", result[1])
@@ -293,28 +345,5 @@ if __name__ == "__main__":
     print("The extracted watermark is correlated to that original? ", result[0])
     print("The PSNR between the two watermarks is: ", result[1])
     """
-    """
-    img = im.loadImage("right.png")
-    bimg = im.binarization(img)
-    bimg.show()
-    
-    abimg = im.arnoldTransform(bimg, 1)
-    gimg = im.grayscale(img)
-    agimg = im.arnoldTransform(gimg, 1)
-    im.showImage(bimg)
-    im.showImage(gimg)
 
-    lsb = watermark.LSB(audioData, abimg)
-    ilsb = watermark.iLSB(lsb)
-    ilsb = im.iarnoldTransform(ilsb, 1)
-    im.showImage(ilsb)
-
-    #Necessary to create mixed type array
-    audioData = np.asarray(audioData, dtype=object)
-
-    delta = watermark.deltaDCT(audioData, agimg)
-    idelta = watermark.ideltaDCT(audioData, delta)
-    idelta = im.iarnoldTransform(idelta, 1)
-    im.showImage(idelta)
-    """
 
