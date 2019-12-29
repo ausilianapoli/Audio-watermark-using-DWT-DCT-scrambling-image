@@ -29,7 +29,7 @@ TRIANGULAR_PARAMETERS = [5, 3, 1] #c,a,d
 #embedding
 ALPHA = 0.1
 
-#attacks
+#attack
 CUTOFF_FREQUENCY = 22050
 
 def getAudio(path):
@@ -263,8 +263,8 @@ if __name__ == "__main__":
 
     opt = parser.parse_args()
     
-    if os.path.isdir(opt.output) is False:
-        sys.exit("Output dir does not exist!")
+    if os.path.isdir(opt.output) == False:
+        os.mkdir(opt.output)
     if os.path.isdir(opt.source):
         sys.exit("Source must not be a dir!")
     if opt.source == '' or opt.watermark == '':
