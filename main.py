@@ -209,7 +209,7 @@ def compareAudio(audio, stegoAudio):
     snrStego = m.SNR(stegoAudio)
     return snr, snrStego
 
-def attackStego(stegoAudio, outputDir):
+def attackStego(stegoAudio):
     stegoAudio = am.readWavFile(stegoAudio)
     tAmplitude = [0.5, 2]
     for i in range(len(tAmplitude)):
@@ -232,7 +232,7 @@ def main():
     stegoAudio = outputDir + "stego-" + opt.embedding_mode + "-" + opt.source
     wCoeffs = embedding(opt.source, opt.watermark, outputDir + "stego-" + opt.embedding_mode, opt.scrambling_mode, opt.type_watermark, opt.embedding_mode, 1)
     extraction(stegoAudio, opt.source, stegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    attackStego(stegoAudio, opt.embedding_mode)
+    attackStego(stegoAudio)
 
     relativeStegoAudio = "stego-" + opt.embedding_mode + "-" + opt.source
     relativeStegoImage = opt.embedding_mode + "-" + opt.watermark
