@@ -237,20 +237,20 @@ def main():
     relativeStegoAudio = "stego-" + opt.embedding_mode + "-" + opt.source
     relativeStegoImage = opt.embedding_mode + "-" + opt.watermark
     
-    #extraction(outputDir +"12000-" +relativeStegoAudio, stegoAudio, "12000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    """
-    extraction(outputDir +"24000-" +relativeStegoAudio,stegoAudio, "24000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"36000-" +relativeStegoAudio,stegoAudio, "36000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"amplitude0.5-" +relativeStegoAudio,stegoAudio, "amplitude0.5-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"amplitude2-" +relativeStegoAudio,stegoAudio, "amplitude2-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"butter2-" +relativeStegoAudio,stegoAudio, "butter2-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"butter4-" +relativeStegoAudio,stegoAudio, "butter4-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"butter6-" +relativeStegoAudio,stegoAudio, "butter6-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"gauss0.0001-" +relativeStegoAudio,stegoAudio, "gauss0.0001-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"gauss0.0002-" +relativeStegoAudio,stegoAudio, "gauss0.0002-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"gauss0.00015-" +relativeStegoAudio,stegoAudio, "gauss0.00015-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    extraction(outputDir +"gauss5e-05-" +relativeStegoAudio,stegoAudio, "gauss5e-05-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
-    """
+    #extraction(outputDir + "12000-" + relativeStegoAudio, stegoAudio, "12000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    
+    extraction(outputDir + "24000-" + relativeStegoAudio,stegoAudio, outputDir + "24000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "36000-" + relativeStegoAudio,stegoAudio, outputDir + "36000-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "amplitude0.5-" + relativeStegoAudio,stegoAudio, outputDir + "amplitude0.5-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "amplitude2-" + relativeStegoAudio,stegoAudio, outputDir + "amplitude2-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "butter2-" + relativeStegoAudio,stegoAudio, outputDir + "butter2-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "butter4-" + relativeStegoAudio,stegoAudio, outputDir + "butter4-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "butter6-" + relativeStegoAudio,stegoAudio, outputDir + "butter6-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "gauss0.0001-" + relativeStegoAudio,stegoAudio, outputDir + "gauss0.0001-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "gauss0.0002-" + relativeStegoAudio,stegoAudio, outputDir + "gauss0.0002-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "gauss0.00015-" + relativeStegoAudio,stegoAudio, outputDir + "gauss0.00015-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    extraction(outputDir + "gauss5e-05-" + relativeStegoAudio,stegoAudio, outputDir + "gauss5e-05-" + relativeStegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
