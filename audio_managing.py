@@ -136,7 +136,7 @@ def DCT(data):
 
 #Get inverse of DCT of data
 def iDCT(data):
-    idctData = idct(data, type = 2, norm = "ortho")
+    idctData = idct(data, type = 3, norm = "ortho")
     return idctData
 
 #Get FFT of data
