@@ -2,7 +2,7 @@ from scipy.io import wavfile
 from scipy.fftpack import dct, idct, fft, fftfreq, ifft
 import subprocess as sp
 import platform
-from utils import makeFileName
+from utils import makeFileName, withoutExtensionFile
 import os
 import numpy as np
 import math
@@ -104,6 +104,8 @@ def waveform(entry):
     plt.plot(entry[AUDIO_DATA])
     plt.title("Waveform: {}"\
               .format(entry[AUDIO_PATH]))
+    nameFile = withoutExtensionFile(entry[AUDIO_PATH])
+    plt.savefig(nameFile)
     plt.show()
     
 #Get the list of all wavelets

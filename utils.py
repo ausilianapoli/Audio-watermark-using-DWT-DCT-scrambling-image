@@ -40,6 +40,11 @@ def makeFileName(prefix, path):
     nPath = os.path.join(dirName, fileName)
     return nPath
 
+#Routine to extract name of the file from its path without its extension
+def withoutExtensionFile(pathname):
+    pathname = os.path.basename(pathname).split(".")
+    return pathname[0]
+
 def splitFloat(number):
     if type(number) not in (float, np.float64):
         sys.exit("SPLIT FLOAT: number must be float!")
