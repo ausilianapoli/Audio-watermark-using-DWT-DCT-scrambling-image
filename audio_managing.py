@@ -133,7 +133,7 @@ def iDWT(coeffs, wavelet, mode):
 
 #Get DCT of data
 def DCT(data):
-    dctData = dct(data, type = 2, norm = "ortho")
+    dctData = dct(data, type = 3, norm = "ortho")
     return dctData
 
 #Get inverse of DCT of data
