@@ -1,0 +1,11 @@
+TO RUN DELTA BINARY
+
+python3.7 main.py --source mono-piano.wav --watermark right.png  --type-watermark BINARY  --embedding-mode delta --output deltaBinary
+
+TO RUN BRUTE BINARY
+
+python3.7 main.py --source mono-piano.wav --watermark right.png  --type-watermark BINARY  --embedding-mode bruteBinary --output bruteBinary
+
+TO RUN BRUTE GRAYSCALE
+
+python3.7 main.py --source mono-piano.wav --watermark right.png  --type-watermark GRAYSCALE  --embedding-mode bruteGray --output bruteGray
