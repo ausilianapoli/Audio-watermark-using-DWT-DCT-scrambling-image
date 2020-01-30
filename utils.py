@@ -41,9 +41,9 @@ def makeFileName(prefix, path):
     return nPath
 
 #Routine to extract name of the file from its path without its extension
-def withoutExtensionFile(pathname):
+def withoutExtensionFile(pathname, sufix=""):
     pathname = os.path.basename(pathname).split(".")
-    return pathname[0]
+    return pathname[0]+sufix
 
 def splitFloat(number):
     if type(number) not in (float, np.float64):

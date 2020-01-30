@@ -101,10 +101,10 @@ def frameToAudio(frames):
 #Plot the waveform of input audio file
 def waveform(entry):
     plt.figure()
-    plt.plot(entry[AUDIO_DATA])
+    plt.plot(entry[AUDIO_DATA][:1000])
     plt.title("Waveform: {}"\
               .format(entry[AUDIO_PATH]))
-    nameFile = withoutExtensionFile(entry[AUDIO_PATH])
+    nameFile = withoutExtensionFile(entry[AUDIO_PATH], "1000")
     plt.savefig(nameFile)
     plt.show()
     
