@@ -13,7 +13,10 @@ def binaryDetection(index, threshold):
 
 #PSNR for watermark images
 def PSNR(wOriginal, wExtracted):
-    mse = np.mean((wOriginal - wExtracted)**2)
+    try:
+        mse = np.mean((wOriginal - wExtracted)**2)
+    except TypeError:
+        mse = np.mean((wOriginal ^ wExtracted)**2)
     psnr = 10 * math.log10((255.0**2)/mse)
     return psnr
 
