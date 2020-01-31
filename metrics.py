@@ -1,6 +1,7 @@
 import scipy.stats as stats
 import numpy as np
 import math
+from sklearn.metrics import mean_squared_error
 
 #Pearson index to "view" the correlation between two watermarks
 def correlationIndex(wOriginal, wExtracted):
@@ -17,6 +18,7 @@ def PSNR(wOriginal, wExtracted):
         mse = np.mean((wOriginal - wExtracted)**2)
     except TypeError:
         mse = np.mean((wOriginal ^ wExtracted)**2)
+    #mse = mean_squared_error(wOriginal, wExtracted)
     psnr = 10 * math.log10((255.0**2)/mse)
     return psnr
 
