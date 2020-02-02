@@ -24,4 +24,7 @@ Structure of the project:
 - `utils.py` containing various functions of general purpose;
 - `main.py` containing the pipeline of the whole project.
 
+##Authors
+- [Maria Ausilia Napoli Spatafora](https://github.com/ausilianapoli)
+- [Mattia Litrico](https://github.com/mattia1997)
  
