@@ -1,4 +1,4 @@
-# Audio-watermark-using-DWT-DCT-Arnold
+# Audio Watermark using DWT-DCT approach and scrambling image
 Audio watermark using DWT-DCT approach and scrambling methods for embedding of binary or grayscale image into audio signal.  
 [Scientific Paper](https://ieeexplore.ieee.org/abstract/document/7150750)
 
