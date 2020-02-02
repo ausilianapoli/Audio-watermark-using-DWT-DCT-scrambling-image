@@ -130,24 +130,24 @@ The extracted watermark is correlated to that original?  False ---
 The PSNR between the two watermarks is:  32.949593876990455 ---
 /*The extracted watermark is correlated to that original?  False
 The PSNR between the two watermarks is:  32.02306647327747*/
-The extracted watermark is correlated to that original?  True
-The PSNR between the two watermarks is:  28.251561361220663
-The extracted watermark is correlated to that original?  True
-The PSNR between the two watermarks is:  29.779733403459478
-The extracted watermark is correlated to that original?  False
-The PSNR between the two watermarks is:  29.808096887672882
-The extracted watermark is correlated to that original?  False
-The PSNR between the two watermarks is:  29.805581947481233
-The extracted watermark is correlated to that original?  False
-The PSNR between the two watermarks is:  29.816002107085723
-The extracted watermark is correlated to that original?  True
-The PSNR between the two watermarks is:  27.889401260339376
-The extracted watermark is correlated to that original?  True
-The PSNR between the two watermarks is:  27.92753022967308
-The extracted watermark is correlated to that original?  True
-The PSNR between the two watermarks is:  27.922325081495302
-The extracted watermark is correlated to that original?  True
-The PSNR between the two watermarks is:  27.88353038513304
+The extracted watermark is correlated to that original?  True ---
+The PSNR between the two watermarks is:  28.251561361220663 ---
+The extracted watermark is correlated to that original?  True ---
+The PSNR between the two watermarks is:  29.779733403459478 ---
+The extracted watermark is correlated to that original?  False --
+The PSNR between the two watermarks is:  29.808096887672882 ---
+The extracted watermark is correlated to that original?  False ---
+The PSNR between the two watermarks is:  29.805581947481233 ---
+The extracted watermark is correlated to that original?  False ---
+The PSNR between the two watermarks is:  29.816002107085723 ---
+The extracted watermark is correlated to that original?  True ---
+The PSNR between the two watermarks is:  27.889401260339376  ---
+The extracted watermark is correlated to that original?  True ---
+The PSNR between the two watermarks is:  27.92753022967308 ---
+The extracted watermark is correlated to that original?  True ---
+The PSNR between the two watermarks is:  27.922325081495302 ---
+The extracted watermark is correlated to that original?  True ---
+The PSNR between the two watermarks is:  27.88353038513304 ---
 SNR of mono-piano.wav is: -0.0006232534034762293
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896 ---
@@ -159,20 +159,20 @@ SNR of 36000-stego-bruteGray-mono-piano.wav is: -0.0005489755952095713 ---
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
 SNR of 48001-stego-bruteGray-mono-piano.wav is: -0.0005488745182238615
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
-SNR of amplitude0.5-stego-bruteGray-mono-piano.wav is: -0.0005386458058829972
+SNR of amplitude0.5-stego-bruteGray-mono-piano.wav is: -0.0005386458058829972 ---
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
-SNR of amplitude2-stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
+SNR of amplitude2-stego-bruteGray-mono-piano.wav is: -0.0005491130085564896 ---
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
-SNR of butter2-stego-bruteGray-mono-piano.wav is: -0.01866858415476968
+SNR of butter2-stego-bruteGray-mono-piano.wav is: -0.01866858415476968 ---
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
-SNR of butter4-stego-bruteGray-mono-piano.wav is: -0.018667494896427196
+SNR of butter4-stego-bruteGray-mono-piano.wav is: -0.018667494896427196 ----
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
-SNR of butter6-stego-bruteGray-mono-piano.wav is: -0.01866730124937593
+SNR of butter6-stego-bruteGray-mono-piano.wav is: -0.01866730124937593 ---
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
-SNR of gauss0.0001-stego-bruteGray-mono-piano.wav is: -0.0005399644337355008
+SNR of gauss0.0001-stego-bruteGray-mono-piano.wav is: -0.0005399644337355008 ---
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
-SNR of gauss0.0002-stego-bruteGray-mono-piano.wav is: -0.0005402947329267525
+SNR of gauss0.0002-stego-bruteGray-mono-piano.wav is: -0.0005402947329267525 ---
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
-SNR of gauss0.00015-stego-bruteGray-mono-piano.wav is: -0.0005393181290828709
+SNR of gauss0.00015-stego-bruteGray-mono-piano.wav is: -0.0005393181290828709 ---
 SNR of bruteGray/stego-bruteGray-mono-piano.wav is: -0.0005491130085564896
-SNR of gauss5e-05-stego-bruteGray-mono-piano.wav is: -0.0005399228353640852
+SNR of gauss5e-05-stego-bruteGray-mono-piano.wav is: -0.0005399228353640852 ----
