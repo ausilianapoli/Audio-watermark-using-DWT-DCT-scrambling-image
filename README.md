@@ -1,5 +1,5 @@
 # Audio Watermark using DWT-DCT approach and scrambling image
-Audio watermark using DWT-DCT approach and scrambling methods for embedding of binary or grayscale image into audio signal.  
+Audio watermark using DWT-DCT approach and scrambling methods for embedding of binary or grayscale image into audio signal. Its goal is to guarantee authenticity of the audio signal.  
 This is our project for the academic course of Multimedia at University of Catania for the Master Degree in Computer Science.  
 The scientific papers to which we referred are:
 - [Blind Audio Watermarking Based On Discrete Wavelet and Cosine Transform](https://ieeexplore.ieee.org/abstract/document/7150750);
