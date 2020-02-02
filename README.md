@@ -22,9 +22,9 @@ Structure of the project:
 - `metrics.py` containing PSNR, SNR and Pearson's Index to evaluate techniques' performances;
 - `attacks_on_watermark.py` containing some attacks to audio signal;
 - `utils.py` containing various functions of general purpose;
-- `main.py` containing the pipeline of the whole project.
+- `main.py` containing the pipeline of the whole project and in the txt file `commands_to_run` there are the commands for bash.
 
-##Authors
+## Authors
 - [Maria Ausilia Napoli Spatafora](https://github.com/ausilianapoli)
 - [Mattia Litrico](https://github.com/mattia1997)
  
