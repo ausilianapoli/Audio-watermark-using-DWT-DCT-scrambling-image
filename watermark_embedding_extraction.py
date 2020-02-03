@@ -118,7 +118,7 @@ def bruteBinary(coeffs, image):
 def ibruteBinary(coeffs):
     joinCoeffs = coeffs.copy()
     width, heigth = (128,128)#sizeExtraction(joinCoeffs)
-    extracted = Image.new("L",(width,heigth))
+    extracted = Image.new("1",(width,heigth))
     coeffsLen = len(joinCoeffs)
 
     #Extraction watermark
@@ -166,7 +166,7 @@ def deltaDCT(coeffs, image):
 def ideltaDCT(coeffs):
     joinCoeffs = coeffs.copy()
     width, heigth = (128,128)#sizeExtraction(joinCoeffs)
-    extracted = Image.new("1",(width,heigth))
+    extracted = Image.new("L",(width,heigth))
     coeffsLen = len(coeffs)
 
     #Extraction watermark

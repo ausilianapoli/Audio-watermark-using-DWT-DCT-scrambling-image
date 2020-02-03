@@ -126,6 +126,7 @@ def inormalize(number, range):
 def ImageToFlattedArray(image):
     return np.ravel(np.asarray(image))
 
+
 #Procedure to have two images of same size
 def fixSizeImg(img, toFixImg, imgMode):
     mode = ("L" if imgMode == 1 else "1")
