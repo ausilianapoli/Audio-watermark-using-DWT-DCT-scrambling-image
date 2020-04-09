@@ -228,6 +228,50 @@ def ibruteGray(coeffs):
             extracted.putpixel(xy=(i,j),value=value)
 
     return extracted
+def embed_bit(frame, step, bit):
+    data = frame.copy()
+    #we want frame[x] > frame[x+1]
+    if bit == 1:
+        if data[ste]
+
+def embedding(coeffs, image):
+    image = isImgGrayScale(image)
+    
+    joinCoeffs = coeffs.copy()
+
+    coeffsLen = len(coeffs)
+    frameLen = len(coeffs[0])
+    if frameLen < 16:
+        sys.exit("EMBEDDING: Frame length must be >= 16!")
+
+    #Embedding watermark
+    for i in range(width):
+        for j in range(heigth):
+            value = image.getpixel(xy=(i,j))
+            bin_value = decToBinary(value, bits=8)
+            x = i*heigth + j
+            for b in range(0,16, 2):
+                joinCoeffs[x][b] = 
+         
+    return joinCoeffs
+
+def iembedding(coeffs):
+    joinCoeffs = coeffs.copy()
+    width, heigth = (128,128)#sizeExtraction(joinCoeffs)
+    extracted = Image.new("L",(width,heigth))
+    coeffsLen = len(coeffs)
+
+    #Extraction watermark
+    for i in range(width):
+        for j in range(heigth):
+            x = i*heigth + j
+            try:
+                value = getGray(joinCoeffs[x+2])
+            except IndexError:
+                value = 0
+            extracted.putpixel(xy=(i,j),value=value)
+
+    return extracted
 
 #The watermark is embedded into k coefficents of greater magnitudo
 def magnitudoDCT(coeffs, watermark, alpha):

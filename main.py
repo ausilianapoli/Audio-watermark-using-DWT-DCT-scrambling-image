@@ -74,7 +74,7 @@ def getPayload(image, outputImagePath):
     #fileName = makeFileName(outputImageName, outputImagePath)
     im.saveImage(image, outputImagePath)
     
-def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, embeddingMode, frames = 0):
+def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, embeddingMode, frames = 1):
     #1 load audio file
     audioData, tupleAudio = getAudio(audioPath)
 
@@ -132,7 +132,7 @@ def embedding(audioPath, imagePath, outputAudioPath, scramblingMode, imageMode, 
 
     return wCoeffs #return information for extraction
     
-def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode, frames = 0):
+def extraction(stegoAudio, audio, outputImagePath, scramblingMode, embeddingMode, frames = 1):
     #1 load audio file
     audioData, tupleAudio = getAudio(audio)
     stegoAudioData, stegoTupleAudio = getAudio(stegoAudio)
@@ -229,8 +229,9 @@ def main():
     outputDir = opt.output + "/"
     stegoImage = outputDir + opt.embedding_mode + "-" + opt.watermark
     stegoAudio = outputDir + "stego-" + opt.embedding_mode + "-" + opt.source
-    wCoeffs = embedding(opt.source, opt.watermark, outputDir + "stego-" + opt.embedding_mode, opt.scrambling_mode, opt.type_watermark, opt.embedding_mode, 1)
-    extraction(stegoAudio, opt.source, stegoImage, opt.scrambling_mode, opt.embedding_mode,1)
+    wCoeffs = embedding(opt.source, opt.watermark, outputDir + "stego-" + opt.embedding_mode, opt.scrambling_mode, opt.type_watermark, opt.embedding_mode, 0)
+    extraction(stegoAudio, opt.source, stegoImage, opt.scrambling_mode, opt.embedding_mode)
+    """
     attackStego(stegoAudio)
 
     relativeStegoAudio = "stego-" + opt.embedding_mode + "-" + opt.source
@@ -319,7 +320,7 @@ def main():
     print("SNR of {} is: {}\nSNR of {} is: {}".format(stegoAudio, snr[0], "gauss0.00015-" + relativeStegoAudio, snr[1]))
     snr = compareAudio(stegoAudio, outputDir + "gauss5e-05-" + relativeStegoAudio)
     print("SNR of {} is: {}\nSNR of {} is: {}".format(stegoAudio, snr[0], "gauss5e-05-" + relativeStegoAudio, snr[1]))
-
+    """
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--source', type=str, default='', help='audio input')

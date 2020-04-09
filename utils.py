@@ -212,3 +212,8 @@ def normCalc(v):
     norm = math.sqrt(norm)
     u = v/norm
     return norm, u
+#swap value in array
+def swap(coeff, a, b):
+    data = coeff.copy()
+    data[a], data[b] = data[b], data[a]
+    return data
